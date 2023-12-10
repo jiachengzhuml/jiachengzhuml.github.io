@@ -188,12 +188,13 @@ function unhide(divID) {
   <h4>About</h4>
 
   <p>
-  I am currently a posdoc at <a href="https://www.csail.mit.edu/" target="_blank" rel="noopener noreferrer">MIT CSAIL</a>, 
+  I am currently a postdoc at <a href="https://www.csail.mit.edu/" target="_blank" rel="noopener noreferrer">MIT CSAIL</a>, 
   working with <a href="https://people.csail.mit.edu/jsolomon/" target="_blank"> Justin Solomon</a> and <a href="  https://healthyml.org/marzyeh/" target="_blank"> Marzyeh Ghassemi</a>.
   I obtaiend my Ph.D. from Carnegie Mellon Univeristy, as well as an M.S. in Machine Learning. 
   I am fourtunate to have Prof. <a href="https://dept.stat.lsa.umich.edu/~xuanlong/" target="_blank">Long Nguyen</a> to be my academia advisor, 
   and I work closely with Prof. <a href="https://aisecure.github.io/" target="_blank">Bo Li</a>. 
   My research has been supported by the <a href="https://www.qualcomm.com/research/university-relations/innovation-fellowship/2022-north-america" target="_blank">Qualcomm Innovation Fellowship (QIF 2022)</a>.
+  I have worked as a research intern at <a href="https://machinelearning.apple.com/" target="_blank">Apple AI/ML</a> and <a href="https://about.att.com/sites/labs" target="_blank">AT&T Labs</a>.
   Previously, I received my bachelor's in Computational Mechanics and a minor in Data Science from Fudan University.
 
  </p><p>
@@ -242,7 +243,7 @@ function unhide(divID) {
   <h4>News</h4>
   <!-- <p> Scroll for older news </p> -->
   <UL style="list-style-type: none; padding: 2px; overflow-y: scroll; height:400px;">
-    
+    <li> 2023/11: One paper get accepted at ML4H 2023, going to serve as the roundtable chair for <a href="https://ml4h.cc/2023/research_roundtables.html"><strong>multimodal AI in Health.</strong></a> </li> 
     <li> 2023/09: One paper get accepted at NeurIPS 2023. </li> 
     <li> 2023/09: I joined MIT Computer Science and Artificial Intelligence Laboratory (CSAIL) as a postdoctoral scholar! </li> 
     <li> 2023/08: I will give a talk at the <a href="https://healthyml.org/"><strong>Healthy ML lab</strong></a>, led by <a href="https://healthyml.org/marzyeh/"><strong>Prof. Marzyeh Ghassemi</strong></a> at MIT CSAIL, Thanks for hosting! </li> 
@@ -771,6 +772,61 @@ function unhide(divID) {
 
             <!-- paper in category filter -->
 
+            <span class="anchor" id="ECGNLP"></span>
+            <div class="paper">
+              <p class="title"><b>Automated Cardiovascular Record Retrieval by Multimodal Learning between Electrocardiogram and Clinical Report</b></p>
+              <p>Jielin Qiu*, <b>Jiacheng Zhu*</b>, Shiqi Liu, William Han, Jingqi Zhang, Chaojing Duan, Michael A. Rosenberg, Emerson Liu, Douglas Weber, Ding Zhao.</p>
+              <p><i>ML4H 2023: Machine Learnign for Health, 2023</i></p>
+
+              <!-- This causes the bug where papers appear repeated when selecting all. TODO why?-->
+
+              <div class="paper-buttons">
+                
+                        
+                      <!-- External URLS -->
+                          
+                      <a class="button" href="https://proceedings.mlr.press/v225/qiu23a.html" target="_blank">proceeding</a>
+                    
+
+                   <!-- paper has attrib filter -->
+                
+                      <a class="button" href="https://arxiv.org/abs/2208.01220" target="_blank">arxiv</a>
+                    
+
+                   <!-- paper has attrib filter -->
+                
+                   <!-- paper has attrib filter -->
+                
+                   <!-- paper has attrib filter -->
+                   <a class="button" href="javascript:unhide('bib_aiml_ECGNLP');">bib</a>
+                
+                 <!-- over attribs -->
+              </div>
+
+              <!-- Additional hidden containers that should appear after buttons -->
+              <div id="bib_aiml_ECGNLP" class="hidden">
+                <pre> 
+                    @InProceedings{pmlr-v225-qiu23a,
+                      title = 	 {Automated Cardiovascular Record Retrieval by Multimodal Learning between Electrocardiogram and Clinical Report},
+                      author =       {Qiu, Jielin and Zhu, Jiacheng and Liu, Shiqi and Han, William and Zhang, Jingqi and Duan, Chaojing and Rosenberg, Michael A. and Liu, Emerson and Weber, Douglas and Zhao, Ding},
+                      booktitle = 	 {Proceedings of the 3rd Machine Learning for Health Symposium},
+                      pages = 	 {480--497},
+                      year = 	 {2023},
+                      editor = 	 {Hegselmann, Stefan and Parziale, Antonio and Shanmugam, Divya and Tang, Shengpu and Asiedu, Mercy Nyamewaa and Chang, Serina and Hartvigsen, Tom and Singh, Harvineet},
+                      volume = 	 {225},
+                      series = 	 {Proceedings of Machine Learning Research},
+                      month = 	 {10 Dec},
+                      publisher =    {PMLR},
+                      pdf = 	 {https://proceedings.mlr.press/v225/qiu23a/qiu23a.pdf},
+                      url = 	 {https://proceedings.mlr.press/v225/qiu23a.html},
+                      abstract = 	 {Automated interpretation of electrocardiograms (ECG) has garnered significant attention with the advancements in machine learning methodologies. Despite the growing interest, most current studies focus solely on classification or regression tasks which overlook a crucial aspect of clinical cardio-disease diagnosis: the diagnostic report generated by experienced human clinicians. In this paper, we introduce a novel approach to ECG interpretation, leveraging recent breakthroughs in Large Language Models (LLMs) and Vision-Transformer (ViT) models. Rather than treating ECG diagnosis as a classification or regression task, we propose an alternative method of automatically identifying the most similar clinical cases based on the input ECG data. Also, since interpreting ECG as images is more affordable and accessible, we process ECG as encoded images and adopt a vision-language learning paradigm to jointly learn vision-language alignment between encoded ECG images and ECG diagnosis reports. Encoding ECG into images can result in an efficient ECG retrieval system, which will be highly practical and useful in clinical applications. More importantly, our findings could serve as a crucial resource for providing diagnostic services in underdevelopment regions.}
+                    }
+                  </pre>
+              </div>
+
+              
+            </div>
+
             <!-- paper in category filter -->
         
 
@@ -1171,7 +1227,62 @@ function unhide(divID) {
     
       
       <div class="tab-pane" id="papers-healthcare">
-        
+
+        <span class="anchor" id="ECGNLP"></span>
+        <div class="paper">
+          <p class="title"><b>Automated Cardiovascular Record Retrieval by Multimodal Learning between Electrocardiogram and Clinical Report</b></p>
+          <p>Jielin Qiu*, <b>Jiacheng Zhu*</b>, Shiqi Liu, William Han, Jingqi Zhang, Chaojing Duan, Michael A. Rosenberg, Emerson Liu, Douglas Weber, Ding Zhao.</p>
+          <p><i>ML4H 2023: Machine Learnign for Health, 2023</i></p>
+
+          <!-- This causes the bug where papers appear repeated when selecting all. TODO why?-->
+
+          <div class="paper-buttons">
+            
+                    
+                  <!-- External URLS -->
+                      
+                  <a class="button" href="https://proceedings.mlr.press/v225/qiu23a.html" target="_blank">proceeding</a>
+                
+
+               <!-- paper has attrib filter -->
+            
+                  <a class="button" href="https://arxiv.org/abs/2208.01220" target="_blank">arxiv</a>
+                
+
+               <!-- paper has attrib filter -->
+            
+               <!-- paper has attrib filter -->
+            
+               <!-- paper has attrib filter -->
+               <a class="button" href="javascript:unhide('bib_aiml_ECGNLP');">bib</a>
+            
+             <!-- over attribs -->
+          </div>
+
+          <!-- Additional hidden containers that should appear after buttons -->
+          <div id="bib_aiml_ECGNLP" class="hidden">
+            <pre> 
+                @InProceedings{pmlr-v225-qiu23a,
+                  title = 	 {Automated Cardiovascular Record Retrieval by Multimodal Learning between Electrocardiogram and Clinical Report},
+                  author =       {Qiu, Jielin and Zhu, Jiacheng and Liu, Shiqi and Han, William and Zhang, Jingqi and Duan, Chaojing and Rosenberg, Michael A. and Liu, Emerson and Weber, Douglas and Zhao, Ding},
+                  booktitle = 	 {Proceedings of the 3rd Machine Learning for Health Symposium},
+                  pages = 	 {480--497},
+                  year = 	 {2023},
+                  editor = 	 {Hegselmann, Stefan and Parziale, Antonio and Shanmugam, Divya and Tang, Shengpu and Asiedu, Mercy Nyamewaa and Chang, Serina and Hartvigsen, Tom and Singh, Harvineet},
+                  volume = 	 {225},
+                  series = 	 {Proceedings of Machine Learning Research},
+                  month = 	 {10 Dec},
+                  publisher =    {PMLR},
+                  pdf = 	 {https://proceedings.mlr.press/v225/qiu23a/qiu23a.pdf},
+                  url = 	 {https://proceedings.mlr.press/v225/qiu23a.html},
+                  abstract = 	 {Automated interpretation of electrocardiograms (ECG) has garnered significant attention with the advancements in machine learning methodologies. Despite the growing interest, most current studies focus solely on classification or regression tasks which overlook a crucial aspect of clinical cardio-disease diagnosis: the diagnostic report generated by experienced human clinicians. In this paper, we introduce a novel approach to ECG interpretation, leveraging recent breakthroughs in Large Language Models (LLMs) and Vision-Transformer (ViT) models. Rather than treating ECG diagnosis as a classification or regression task, we propose an alternative method of automatically identifying the most similar clinical cases based on the input ECG data. Also, since interpreting ECG as images is more affordable and accessible, we process ECG as encoded images and adopt a vision-language learning paradigm to jointly learn vision-language alignment between encoded ECG images and ECG diagnosis reports. Encoding ECG into images can result in an efficient ECG retrieval system, which will be highly practical and useful in clinical applications. More importantly, our findings could serve as a crucial resource for providing diagnostic services in underdevelopment regions.}
+                }
+              </pre>
+          </div>
+
+          
+        </div>
+
 
            <!-- paper in category filter -->
            <span class="anchor" id="ECGOT"></span>
@@ -1836,7 +1947,62 @@ function unhide(divID) {
         </div>
 
         <!-- paper in category filter -->
+        
+        <span class="anchor" id="ECGNLP"></span>
+            <div class="paper">
+              <p class="title"><b>Automated Cardiovascular Record Retrieval by Multimodal Learning between Electrocardiogram and Clinical Report</b></p>
+              <p>Jielin Qiu*, <b>Jiacheng Zhu*</b>, Shiqi Liu, William Han, Jingqi Zhang, Chaojing Duan, Michael A. Rosenberg, Emerson Liu, Douglas Weber, Ding Zhao.</p>
+              <p><i>ML4H 2023: Machine Learnign for Health, 2023</i></p>
 
+              <!-- This causes the bug where papers appear repeated when selecting all. TODO why?-->
+
+              <div class="paper-buttons">
+                
+                        
+                      <!-- External URLS -->
+                          
+                      <a class="button" href="https://proceedings.mlr.press/v225/qiu23a.html" target="_blank">proceeding</a>
+                    
+
+                   <!-- paper has attrib filter -->
+                
+                      <a class="button" href="https://arxiv.org/abs/2208.01220" target="_blank">arxiv</a>
+                    
+
+                   <!-- paper has attrib filter -->
+                
+                   <!-- paper has attrib filter -->
+                
+                   <!-- paper has attrib filter -->
+                   <a class="button" href="javascript:unhide('bib_aiml_ECGNLP');">bib</a>
+                
+                 <!-- over attribs -->
+              </div>
+
+              <!-- Additional hidden containers that should appear after buttons -->
+              <div id="bib_aiml_ECGNLP" class="hidden">
+                <pre> 
+                    @InProceedings{pmlr-v225-qiu23a,
+                      title = 	 {Automated Cardiovascular Record Retrieval by Multimodal Learning between Electrocardiogram and Clinical Report},
+                      author =       {Qiu, Jielin and Zhu, Jiacheng and Liu, Shiqi and Han, William and Zhang, Jingqi and Duan, Chaojing and Rosenberg, Michael A. and Liu, Emerson and Weber, Douglas and Zhao, Ding},
+                      booktitle = 	 {Proceedings of the 3rd Machine Learning for Health Symposium},
+                      pages = 	 {480--497},
+                      year = 	 {2023},
+                      editor = 	 {Hegselmann, Stefan and Parziale, Antonio and Shanmugam, Divya and Tang, Shengpu and Asiedu, Mercy Nyamewaa and Chang, Serina and Hartvigsen, Tom and Singh, Harvineet},
+                      volume = 	 {225},
+                      series = 	 {Proceedings of Machine Learning Research},
+                      month = 	 {10 Dec},
+                      publisher =    {PMLR},
+                      pdf = 	 {https://proceedings.mlr.press/v225/qiu23a/qiu23a.pdf},
+                      url = 	 {https://proceedings.mlr.press/v225/qiu23a.html},
+                      abstract = 	 {Automated interpretation of electrocardiograms (ECG) has garnered significant attention with the advancements in machine learning methodologies. Despite the growing interest, most current studies focus solely on classification or regression tasks which overlook a crucial aspect of clinical cardio-disease diagnosis: the diagnostic report generated by experienced human clinicians. In this paper, we introduce a novel approach to ECG interpretation, leveraging recent breakthroughs in Large Language Models (LLMs) and Vision-Transformer (ViT) models. Rather than treating ECG diagnosis as a classification or regression task, we propose an alternative method of automatically identifying the most similar clinical cases based on the input ECG data. Also, since interpreting ECG as images is more affordable and accessible, we process ECG as encoded images and adopt a vision-language learning paradigm to jointly learn vision-language alignment between encoded ECG images and ECG diagnosis reports. Encoding ECG into images can result in an efficient ECG retrieval system, which will be highly practical and useful in clinical applications. More importantly, our findings could serve as a crucial resource for providing diagnostic services in underdevelopment regions.}
+                    }
+                  </pre>
+              </div>
+
+              
+            </div>
+            
         <!-- paper in category filter -->
 
         <span class="anchor" id="CCPO"></span>
@@ -2822,8 +2988,9 @@ function unhide(divID) {
   <b>Organizer</b>
   <ul>
     <li>Conference on Health, Inference, and Learning (CHIL) 2024</li>
+    <li>Round Table Chiar of Machine Learning for Health 2023</li>
     <li>Reviewer mentorship program of Machine Learning for Health 2023</li>
-    <li>ICML 2023 Season Depth Challenge</li>
+    <li>ICRA 2023 Season Depth Challenge</li>
   </ul>
 
   <b>Conference Reviewer</b>
