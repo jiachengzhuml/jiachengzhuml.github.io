@@ -243,6 +243,8 @@ function unhide(divID) {
   <h4>News</h4>
   <!-- <p> Scroll for older news </p> -->
   <UL style="list-style-type: none; padding: 2px; overflow-y: scroll; height:400px;">
+    <li> 2024/02: One paper get accepted at CVPR 2024! Check our <a href="https://github.com/Jason-Qiu/MMSum_model"><strong>MMSum benchmark</strong></a>! </li> 
+    <li> 2024/01: One paper get accepted at AISTATS 2024! </li> 
     <li> 2023/11: One paper get accepted at ML4H 2023, going to serve as the roundtable chair for <a href="https://ml4h.cc/2023/research_roundtables.html"><strong>multimodal AI in Health.</strong></a> </li> 
     <li> 2023/09: One paper get accepted at NeurIPS 2023. </li> 
     <li> 2023/09: I joined MIT Computer Science and Artificial Intelligence Laboratory (CSAIL) as a postdoctoral scholar! </li> 
@@ -312,8 +314,62 @@ function unhide(divID) {
       <!-- TODO: Change the papers-selected to "button active" after editing -->
       <div class="tab-pane active" id="papers-selected">
 
-            
+            <!-- paper in category filter -->
 
+            <!-- paper in category filter -->
+
+            <!-- paper in category filter -->
+            
+          
+            <span class="anchor" id="lora"></span>
+            <div class="paper">
+              <p class="title"><b>Asymmetry in Low-Rank Adapters of Foundation Models</b></p>
+              <p><b>Jiacheng Zhu</b>, Kristjan Greenewald, Kimia Nadjahi, Haitz Sáez de Ocáriz Borde, Rickard Brüel Gabrielsson, Leshem Choshen, Marzyeh Ghassemi, Mikhail Yurochkin, Justin Solomon </p>
+              <p><i>Preprint, under review</i></p>
+
+              <!-- This causes the bug where papers appear repeated when selecting all. TODO why?-->
+              
+
+              <div class="paper-buttons">
+                
+                      <!-- External URLS -->
+                      
+                      <!-- <a class="button" href="https://openreview.net/forum?id=_cFdPHRLuJ" target="_blank">proceeding</a>     -->
+
+                   <!-- paper has attrib filter -->
+                
+                      <a class="button" href="https://arxiv.org/abs/2402.16842" target="_blank">arxiv</a>
+                    
+                      <!-- paper has attrib filter -->
+                
+                      <a class="button" href="https://github.com/Jiacheng-Zhu-AIML/AsymmetryLoRA" target="_blank">code</a>
+
+                   <!-- paper has attrib filter -->
+
+                    
+                      <a class="button" href="javascript:unhide('bib_selected_lora');">bib</a>
+                    
+
+                   <!-- paper has attrib filter -->
+                 <!-- over attribs -->
+              </div>
+
+              <!-- Additional hidden containers that should appear after buttons -->
+              
+                <div id="bib_selected_lora" class="hidden">
+                  <pre> 
+                    @article{zhu2024asymmetry,
+                      title={Asymmetry in Low-Rank Adapters of Foundation Models}, 
+                      author={Jiacheng Zhu and Kristjan Greenewald and Kimia Nadjahi and Haitz Sáez de Ocáriz Borde and Rickard Brüel Gabrielsson and Leshem Choshen and Marzyeh Ghassemi and Mikhail Yurochkin and Justin Solomon},
+                      year={2024},
+                }
+                    </pre>
+                </div>
+              
+            </div>
+           <!-- paper in category filter -->
+
+           <!-- paper in category filter -->
 
             <span class="anchor" id="FOT"></span>
             <div class="paper">
@@ -358,11 +414,14 @@ function unhide(divID) {
                  }
                  </pre>
              </div>
-
-              
               
             </div>
           
+          <!-- paper in category filter -->
+
+           <!-- paper in category filter -->
+
+
             <span class="anchor" id="Geodesic"></span>
             <div class="paper">
               <p class="title"><b>Interpolation for Robust Learning: Data Augmentation on Wasserstein Geodesics</b></p>
@@ -419,9 +478,11 @@ function unhide(divID) {
               
               
             </div>
+
+           <!-- paper in category filter -->
+
            <!-- paper in category filter -->
             
-
           
             <span class="anchor" id="gradient"></span>
             <div class="paper">
@@ -722,6 +783,57 @@ function unhide(divID) {
       <div class="tab-pane" id="papers-aiml">
         
            <!-- paper in category filter -->
+
+           <!-- paper in category filter -->
+            
+          
+           <span class="anchor" id="lora"></span>
+           <div class="paper">
+             <p class="title"><b>Asymmetry in Low-Rank Adapters of Foundation Models</b></p>
+             <p><b>Jiacheng Zhu</b>, Kristjan Greenewald, Kimia Nadjahi, Haitz Sáez de Ocáriz Borde, Rickard Brüel Gabrielsson, Leshem Choshen, Marzyeh Ghassemi, Mikhail Yurochkin, Justin Solomon </p>
+             <p><i>Preprint, under review</i></p>
+
+             <!-- This causes the bug where papers appear repeated when selecting all. TODO why?-->
+             
+
+             <div class="paper-buttons">
+               
+                     <!-- External URLS -->
+                     
+                     <!-- <a class="button" href="https://openreview.net/forum?id=_cFdPHRLuJ" target="_blank">proceeding</a>     -->
+
+                  <!-- paper has attrib filter -->
+               
+                     <a class="button" href="https://arxiv.org/abs/2402.16842" target="_blank">arxiv</a>
+                   
+                     <!-- paper has attrib filter -->
+               
+                     <a class="button" href="https://github.com/Jiacheng-Zhu-AIML/AsymmetryLoRA" target="_blank">code</a>
+
+                  <!-- paper has attrib filter -->
+
+                   
+                     <a class="button" href="javascript:unhide('bib_aiml_lora');">bib</a>
+                   
+
+                  <!-- paper has attrib filter -->
+                <!-- over attribs -->
+             </div>
+
+             <!-- Additional hidden containers that should appear after buttons -->
+             
+               <div id="bib_aiml_lora" class="hidden">
+                 <pre> 
+                   @article{zhu2024asymmetry,
+                     title={Asymmetry in Low-Rank Adapters of Foundation Models}, 
+                     author={Jiacheng Zhu and Kristjan Greenewald and Kimia Nadjahi and Haitz Sáez de Ocáriz Borde and Rickard Brüel Gabrielsson and Leshem Choshen and Marzyeh Ghassemi and Mikhail Yurochkin and Justin Solomon},
+                     year={2024},
+               }
+                   </pre>
+               </div>
+             
+           </div>
+          <!-- paper in category filter -->
 
            <span class="anchor" id="FOT"></span>
             <div class="paper">
@@ -1897,6 +2009,57 @@ function unhide(divID) {
 
       <div class="tab-pane" id="papers-all">
         <!-- paper in category filter -->
+
+        <!-- paper in category filter -->
+            
+          
+        <span class="anchor" id="lora"></span>
+        <div class="paper">
+          <p class="title"><b>Asymmetry in Low-Rank Adapters of Foundation Models</b></p>
+          <p><b>Jiacheng Zhu</b>, Kristjan Greenewald, Kimia Nadjahi, Haitz Sáez de Ocáriz Borde, Rickard Brüel Gabrielsson, Leshem Choshen, Marzyeh Ghassemi, Mikhail Yurochkin, Justin Solomon </p>
+          <p><i>Preprint, under review</i></p>
+
+          <!-- This causes the bug where papers appear repeated when selecting all. TODO why?-->
+          
+
+          <div class="paper-buttons">
+            
+                  <!-- External URLS -->
+                  
+                  <!-- <a class="button" href="https://openreview.net/forum?id=_cFdPHRLuJ" target="_blank">proceeding</a>     -->
+
+               <!-- paper has attrib filter -->
+            
+                  <a class="button" href="https://arxiv.org/abs/2402.16842" target="_blank">arxiv</a>
+                
+                  <!-- paper has attrib filter -->
+            
+                  <a class="button" href="https://github.com/Jiacheng-Zhu-AIML/AsymmetryLoRA" target="_blank">code</a>
+
+               <!-- paper has attrib filter -->
+
+                
+                  <a class="button" href="javascript:unhide('bib_all_lora');">bib</a>
+                
+
+               <!-- paper has attrib filter -->
+             <!-- over attribs -->
+          </div>
+
+          <!-- Additional hidden containers that should appear after buttons -->
+          
+            <div id="bib_all_lora" class="hidden">
+              <pre> 
+                @article{zhu2024asymmetry,
+                  title={Asymmetry in Low-Rank Adapters of Foundation Models}, 
+                  author={Jiacheng Zhu and Kristjan Greenewald and Kimia Nadjahi and Haitz Sáez de Ocáriz Borde and Rickard Brüel Gabrielsson and Leshem Choshen and Marzyeh Ghassemi and Mikhail Yurochkin and Justin Solomon},
+                  year={2024},
+            }
+                </pre>
+            </div>
+          
+        </div>
+       <!-- paper in category filter -->
         
        <!-- paper in category filter -->
 
