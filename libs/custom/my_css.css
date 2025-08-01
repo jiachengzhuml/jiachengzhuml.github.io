@@ -9,7 +9,7 @@ h4 {
   text-transform: none;  */
 }
 .container {
-  max-width: 800px; }
+  max-width: 1000px; }
 .header {
   margin-top: 20px;
   margin-bottom: 60px;
@@ -29,7 +29,7 @@ h4 {
 .paper {
   margin-bottom: 20px }
 .paper .title {
-  font-size: 16px;
+  font-size: 18px;
   /*text-transform: uppercase; */}
 .paper p {
   margin-bottom: 2px }
@@ -39,17 +39,18 @@ h4 {
   display: inline-block;
   height: 25px;
   padding: 0 20px;
-  font-weight: 100;
+  font-weight: 400;
   line-height: 25px;
   text-transform: none; }
 .section-header {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   text-transform: uppercase;
   font-size: 1.5rem;
   letter-spacing: .2rem;
   font-weight: 600; }
 .docs-section {
   border-top: 1px solid #eee;
-  padding: 4rem 0;
+  padding: 3rem 0;
   margin-bottom: 0;}
 .footer {
   text-align: center;
@@ -128,9 +129,10 @@ h4 {
     float: left;
     margin-bottom: 0; }
   .navbar-link {
+    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     text-transform: uppercase;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
     letter-spacing: .2rem;
     margin-right: 35px;
     text-decoration: none;
@@ -199,7 +201,7 @@ h4 {
     border-bottom: 1px solid #eee;
     text-decoration: none;
     text-transform: uppercase;
-    font-size: 1.0rem;
+    font-size: 1.1rem;
     font-weight: 600;
     text-align: center;
     letter-spacing: .1rem; }
@@ -220,9 +222,9 @@ pre {
   background-color: white;
   color: #110000;
   border: 3;
-  font-size:0.75em;
-  line-height:1.2em;
-  max-width: 800px;
+  font-size:0.9em;
+  line-height:1.4em;
+  max-width: 1200px;
   white-space: pre-wrap;       /* css-3 */
   white-space: -pre-wrap;      /* Opera 4-6 */
   white-space: -o-pre-wrap;    /* Opera 7 */
@@ -549,10 +551,147 @@ pre {
   color: var(--text-color);
 }
 
+/* Paper author styling - slightly grey text for differentiation */
+.paper p:nth-child(2) {
+  color: #949494;
+}
+
+/* Dark theme paper author styling */
+[data-theme="dark"] .paper p:nth-child(2) {
+  color: #9c9c9c;
+}
+
+/* Red highlight styling */
+.highlight-red {
+  color: #cc0000;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
 /* Dark theme for scrollable news section */
 [data-theme="dark"] ul[style*="overflow-y"] {
   background-color: var(--paper-bg);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px;
+}
+
+/* ================ IMPROVED FONT SIZES AND SPACING ================ */
+
+/* Increase base font size for better readability */
+body {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+/* Increase paragraph font size */
+p {
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+/* Increase list font sizes */
+ul, ol {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+li {
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+/* Increase header font sizes */
+h1 {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 3.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 2.6rem;
+  font-weight: 600;
+  margin-bottom: 1.4rem;
+}
+
+h3 {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin-bottom: 1.3rem;
+}
+
+h4 {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 2.8rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+}
+
+h5 {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 1.6rem;
+  font-weight: 500;
+  margin-bottom: 1.1rem;
+}
+
+h6 {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+/* Reduce excessive padding in sections */
+.docs-section {
+  padding: 2.5rem 0;
+}
+
+/* Better button sizing */
+.button {
+  font-size: 12px;
+  padding: 8px 16px;
+  line-height: 1.4;
+}
+
+.paper .button {
+  font-size: 14px;
+  padding: 8px 18px;
+  line-height: 0.5;
+}
+
+/* Better navbar container width on larger screens */
+@media (min-width: 750px) {
+  .has-docked-nav .navbar > .container {
+    width: 90%; 
+  }
+}
+
+/* Responsive font sizing */
+@media (max-width: 550px) {
+  body {
+    font-size: 15px;
+  }
+  
+  p, ul, ol, li {
+    font-size: 15px;
+  }
+  
+  h1 {
+    font-size: 2.8rem;
+  }
+  
+  h4 {
+    font-size: 1.6rem;
+  }
+  
+  .paper .title {
+    font-size: 17px;
+  }
 }
