@@ -33,7 +33,7 @@ $(document).ready(function() {
         menu = target;
     $target = $(target);
     $('html, body').stop().animate({
-        'scrollTop': $target.offset().top-40
+        'scrollTop': $target.offset().top-110
     }, 0, 'swing', function () {
         window.location.hash = target;
         $(document).on("scroll", onScroll);
@@ -91,3 +91,51 @@ $(document).ready(function() {
   init();
 
 });
+
+// ================ DARK THEME FUNCTIONALITY ================ //
+
+// Theme toggle functionality
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  
+  setTheme(newTheme);
+  localStorage.setItem('theme', newTheme);
+}
+
+function setTheme(theme) {
+  const html = document.documentElement;
+  const themeIcon = document.getElementById('theme-icon');
+  
+  if (theme === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    themeIcon.className = 'fa fa-sun-o';
+  } else {
+    html.setAttribute('data-theme', 'light');
+    themeIcon.className = 'fa fa-moon-o';
+  }
+}
+
+// Initialize theme on page load
+function initTheme() {
+  // Check for saved theme preference or default to 'dark'
+  const savedTheme = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  // Use saved theme, or system preference, or default to dark
+  const theme = savedTheme || (prefersDark ? 'dark' : 'dark');
+  setTheme(theme);
+}
+
+// Listen for system theme changes
+if (window.matchMedia) {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+    // Only auto-switch if user hasn't manually set a preference
+    if (!localStorage.getItem('theme')) {
+      setTheme(e.matches ? 'dark' : 'light');
+    }
+  });
+}
+
+// Initialize theme when DOM is loaded
+document.addEventListener('DOMContentLoaded', initTheme);

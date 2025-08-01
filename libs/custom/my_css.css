@@ -11,7 +11,7 @@ h4 {
 .container {
   max-width: 800px; }
 .header {
-  margin-top: 60px;
+  margin-top: 20px;
   margin-bottom: 60px;
   text-align: left; }
 .hidden {
@@ -59,7 +59,16 @@ h4 {
   margin-bottom: 0;}
 .navbar {
   text-align: center;
-  display: none; }
+  display: block;
+  width: 100%;
+  background: var(--navbar-bg);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  height: 6.5rem; }
 .title-subtitle h3 {
   margin-bottom: 0px; }
 .title-subtitle h5 {
@@ -89,27 +98,28 @@ h4 {
 /* Larger than phone */
 @media (min-width: 550px) {
   .header {
-    margin-top: 5rem; }
+    margin-top: 3rem; }
 }
 
 /* Larger than tablet */
 @media (min-width: 750px) {
   /* Navbar */
-  .navbar + .docs-section {
+  .docs-section {
     border-top-width: 0; }
-  .navbar,
-  .navbar-spacer {
+  .navbar {
     display: block;
     width: 100%;
     height: 6.5rem;
-    background: #fff;
+    background: var(--navbar-bg);
     z-index: 99;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee; }
-  .navbar-spacer {
-    display: none; }
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0;
+    position: fixed;
+    top: 0;
+    left: 0; }
   .navbar > .container {
-    width: 100%; }
+    width: 100%; 
+    position: relative; }
   .navbar-list {
     list-style: none;
     margin-bottom: 0; }
@@ -132,11 +142,10 @@ h4 {
     position: fixed;
     top: 0;
     left: 0; }
-  .has-docked-nav .navbar-spacer {
-    display: block; }
   /* Re-overiding the width 100% declaration to match size of % based container */
   .has-docked-nav .navbar > .container {
-    width: 80%; }
+    width: 80%; 
+    position: relative; }
 
   /* Popover */
   .popover.open {
@@ -214,17 +223,17 @@ pre {
   font-size:0.75em;
   line-height:1.2em;
   max-width: 800px;
-  whitewhite-space: pre-wrap;       /* css-3 */
-  whitewhite-space: -pre-wrap;      /* Opera 4-6 */
-  whitewhite-space: -o-pre-wrap;    /* Opera 7 */
+  white-space: pre-wrap;       /* css-3 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5+ */
-  whitewhite-space: -moz-pre-wrap;  /* Older Versions of Mozilla */
+  white-space: -moz-pre-wrap;  /* Older Versions of Mozilla */
 }
 
 .anchor{
   display: block;
-  height: 5.5rem; /*same height as header*/
-  margin-top: -4.5rem; /*same height as header*/
+  height: 6.5rem; /*same height as navbar*/
+  margin-top: -6.5rem; /*same height as navbar*/
   visibility: hidden;
 }
 
@@ -310,3 +319,240 @@ figure img {
    display:table-cell;
    width=50%;
 } */
+
+/* ================ DARK THEME STYLES ================ */
+
+/* Dark theme toggle button styling */
+#theme-toggle {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  padding: 10px;
+  display: inline-block;
+}
+
+#theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* Navbar theme toggle positioning */
+.navbar-theme-toggle {
+  float: right;
+  line-height: 6.5rem;
+  margin-right: 0;
+}
+
+.navbar-theme-toggle #theme-toggle {
+  color: var(--text-color);
+  font-size: 16px;
+  padding: 0 15px;
+}
+
+.navbar-theme-toggle #theme-toggle:hover {
+  color: var(--link-color);
+}
+
+/* Mobile navbar adjustments */
+@media (max-width: 749px) {
+  .navbar {
+    height: auto;
+    padding: 15px 0;
+  }
+  
+  .navbar-theme-toggle {
+    line-height: normal;
+    padding: 10px 0;
+  }
+  
+  body {
+    padding-top: 80px; /* Adjusted for mobile navbar height */
+  }
+}
+
+/* Root variables for theme colors */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #222222;
+  --border-color: #eeeeee;
+  --link-color: #33C3F0;
+  --muted-text: rgba(0, 0, 0, 0.6);
+  --footer-text: rgba(0, 0, 0, 0.4);
+  --navbar-bg: #ffffff;
+  --button-bg: #ffffff;
+  --button-border: #bbb;
+  --paper-bg: #ffffff;
+  --pre-bg: #ffffff;
+  --pre-text: #110000;
+  --project-border: rgba(0,0,0,0.2);
+}
+
+/* Dark theme variables */
+[data-theme="dark"] {
+  --bg-color: #1a1a1a;
+  --text-color: #e0e0e0;
+  --border-color: #333333;
+  --link-color: #66d9ff;
+  --muted-text: rgba(255, 255, 255, 0.7);
+  --footer-text: rgba(255, 255, 255, 0.5);
+  --navbar-bg: #1a1a1a;
+  --button-bg: #2a2a2a;
+  --button-border: #555555;
+  --paper-bg: #2a2a2a;
+  --pre-bg: #2a2a2a;
+  --pre-text: #e0e0e0;
+  --project-border: rgba(255,255,255,0.2);
+}
+
+/* Apply theme colors */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  padding-top: 70px; /* Add space for fixed navbar */
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-color);
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--link-color);
+  opacity: 0.8;
+}
+
+/* Sections and borders */
+.docs-section {
+  border-top: 1px solid var(--border-color);
+}
+
+.footer {
+  color: var(--footer-text);
+  border-top: 1px solid var(--border-color);
+}
+
+.navbar {
+  background: var(--navbar-bg);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Title subtitle styling */
+.title-subtitle h5 {
+  color: var(--muted-text);
+}
+
+/* Buttons */
+.button {
+  background-color: var(--button-bg);
+  border: 1px solid var(--button-border);
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background-color: var(--border-color);
+}
+
+/* Paper styling for publications */
+.paper {
+  background-color: var(--paper-bg);
+  border-radius: 8px;
+  padding: 15px;
+  transition: background-color 0.3s ease;
+}
+
+/* Pre and code blocks */
+pre {
+  background-color: var(--pre-bg);
+  color: var(--pre-text);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+/* Project containers */
+.project-image-container {
+  border: 1px solid var(--project-border);
+  transition: all 0.3s ease;
+}
+
+/* Navbar links */
+.navbar-link {
+  color: var(--text-color);
+}
+
+.navbar-link.active {
+  color: var(--link-color);
+}
+
+/* Popover styling */
+.popover {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+}
+
+.popover-link {
+  color: var(--text-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.popover-link:hover {
+  color: #fff;
+  background: var(--link-color);
+}
+
+/* Tab navigation */
+.tab-nav .button.active {
+  background-color: var(--link-color);
+  color: #ffffff;
+}
+
+/* Smooth transitions for all elements */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Additional dark theme styling for missed elements */
+[data-theme="dark"] .container {
+  background-color: var(--bg-color);
+}
+
+[data-theme="dark"] .header {
+  background-color: var(--bg-color);
+}
+
+[data-theme="dark"] .main-description p {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .section-header {
+  color: var(--text-color);
+}
+
+/* Dark theme for images - add subtle border */
+[data-theme="dark"] img {
+  border-radius: 4px;
+  opacity: 0.9;
+}
+
+[data-theme="dark"] .u-max-full-width {
+  border: 1px solid var(--border-color);
+}
+
+/* Dark theme for lists */
+[data-theme="dark"] ul, [data-theme="dark"] ol, [data-theme="dark"] li {
+  color: var(--text-color);
+}
+
+/* Dark theme for scrollable news section */
+[data-theme="dark"] ul[style*="overflow-y"] {
+  background-color: var(--paper-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+}
