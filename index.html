@@ -190,7 +190,7 @@ function unhide(divID) {
   <h4>About</h4>
 
   <p>
-  I am currently an AI research scientist at <a href="https://ai.meta.com/" target="_blank" rel="noopener noreferrer">Meta GenAI Llama team</a>. 
+  I am currently an AI research scientist at <a href="https://ai.meta.com/" target="_blank" rel="noopener noreferrer">Meta MSL</a>. 
   Previously, I was a postdoctoral associate at <a href="https://www.csail.mit.edu/" target="_blank">MIT CSAIL</a>.
   I obtained my Ph.D and MS from Carnegie Mellon University, focusing on Machine Learning and statistics. 
   <!-- I am fortunate to have Prof. <a href="https://dept.stat.lsa.umich.edu/~xuanlong/" target="_blank">Long Nguyen</a> to be my academic advisor, 
@@ -201,11 +201,10 @@ function unhide(divID) {
 
  </p><p>
 
-  I currently lead the reinforcement learning (RL) effort in Large Language Models (LLMs) post-training. My work centers on:
+  While curently at Meta Superintelligence Labs (MSL), my work centers on:
   <ul >
-    <li> RL-driven post-training recipes to excel in various capabilities across data, algorithms, and evaluation</li>
-    <li> New RL methods for reasoning and multimodal, agentic behavior  </li>
-    <li> Applying LLMs themselves to automate and accelerate both objectives above</li>
+    <li> Coding agents </li>
+    <li> Scaling agentic RL</li>
   </ul>
   
   <!-- * I am working on reinforcement learning for human feedback (RLHF) methods, building model optimization pipelines, 
@@ -252,6 +251,83 @@ function unhide(divID) {
     <div class="tab-pane active" id="papers-selected">
 
       <!-- Selected Publications -->
+      <span class="anchor" id="terminal-bench"></span>
+      <div class="paper">
+        <p class="title"><b>Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces</b></p>
+        <p>Mike A Merrill, Alexander Glenn Shaw, Nicholas Carlini, Boxuan Li, <b>Jiacheng Zhu</b>, Ludwig Schmidt, and others</p>
+        <p><i>ICLR 2026 submission</i></p>
+
+        <div class="paper-buttons">
+          <a class="button" href="https://openreview.net/forum?id=a7Qa4CcHak&referrer=%5BAuthor%20Console%5D(%2Fgroup%3Fid%3DICLR.cc%2F2026%2FConference%2FAuthors%23your-submissions)" target="_blank">paper</a>
+          <a class="button" href="https://www.tbench.ai/" target="_blank">website</a>
+          <a class="button" href="javascript:unhide('bib_selected_terminal_bench');">bib</a>
+        </div>
+
+        <div id="bib_selected_terminal_bench" class="hidden">
+          <pre> 
+            @misc{merrill2026terminalbench,
+              title={Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces},
+              author={Mike A. Merrill and Alexander Glenn Shaw and Nicholas Carlini and Boxuan Li and Jiacheng Zhu and Ludwig Schmidt and others},
+              year={2026},
+              note={ICLR submission},
+              url={https://openreview.net/forum?id=a7Qa4CcHak}
+            }
+          </pre>
+        </div>
+      </div>
+
+      <span class="anchor" id="scaling-agent-synthesis"></span>
+      <div class="paper">
+        <p class="title"><b>Scaling Agent Learning via Experience Synthesis</b></p>
+        <p>Meta Superintelligence Labs</p>
+        <p><i>arXiv preprint 2025</i></p>
+
+        <div class="paper-buttons">
+          <a class="button" href="https://arxiv.org/abs/2511.03773" target="_blank">paper</a>
+          <a class="button" href="javascript:unhide('bib_selected_scaling_agent_synthesis');">bib</a>
+        </div>
+
+        <div id="bib_selected_scaling_agent_synthesis" class="hidden">
+          <pre> 
+            @misc{chen2025scalingagentlearningexperience,
+              title={Scaling Agent Learning via Experience Synthesis}, 
+              author={Zhaorun Chen and Zhuokai Zhao and Kai Zhang and Bo Liu and Qi Qi and Yifan Wu and Tarun Kalluri and Sara Cao and Yuanhao Xiong and Haibo Tong and Huaxiu Yao and Hengduo Li and Jiacheng Zhu and Xian Li and Dawn Song and Bo Li and Jason Weston and Dat Huynh},
+              year={2025},
+              eprint={2511.03773},
+              archivePrefix={arXiv},
+              primaryClass={cs.AI},
+              url={https://arxiv.org/abs/2511.03773}
+            }
+          </pre>
+        </div>
+      </div>
+
+      <span class="anchor" id="early-experience"></span>
+      <div class="paper">
+        <p class="title"><b>Agent Learning via Early Experience</b></p>
+        <p>Meta Superintelligence Labs</p>
+        <p><i>arXiv preprint 2025</i></p>
+
+        <div class="paper-buttons">
+          <a class="button" href="https://arxiv.org/abs/2510.08558" target="_blank">paper</a>
+          <a class="button" href="javascript:unhide('bib_selected_early_experience');">bib</a>
+        </div>
+
+        <div id="bib_selected_early_experience" class="hidden">
+          <pre> 
+            @misc{zhang2025agentlearningearlyexperience,
+              title={Agent Learning via Early Experience}, 
+              author={Kai Zhang and Xiangchao Chen and Bo Liu and Tianci Xue and Zeyi Liao and Zhihan Liu and Xiyao Wang and Yuting Ning and Zhaorun Chen and Xiaohan Fu and Jian Xie and Yuxuan Sun and Boyu Gou and Qi Qi and Zihang Meng and Jianwei Yang and Ning Zhang and Xian Li and Ashish Shah and Dat Huynh and Hengduo Li and Zi Yang and Sara Cao and Lawrence Jang and Shuyan Zhou and Jiacheng Zhu and Huan Sun and Jason Weston and Yu Su and Yifan Wu},
+              year={2025},
+              eprint={2510.08558},
+              archivePrefix={arXiv},
+              primaryClass={cs.AI},
+              url={https://arxiv.org/abs/2510.08558}
+            }
+          </pre>
+        </div>
+      </div>
+
       <span class="anchor" id="modomodo"></span>
       <div class="paper">
         <p class="title"><b>MoDoMoDo: Multi-Domain Data Mixtures for Multimodal LLM Reinforcement Learning</b></p>
