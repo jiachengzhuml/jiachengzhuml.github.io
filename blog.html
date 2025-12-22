@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Blog | Jiacheng Zhu</title>
+  <meta name="description" content="Blog posts by Jiacheng Zhu">
+  <meta name="author" content="Jiacheng Zhu">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT -->
+  <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet' type='text/css'>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href=/libs/external/skeleton/normalize.css>
+  <link rel="stylesheet" href=/libs/external/skeleton/skeleton.css>
+  <link rel="stylesheet" href=/libs/custom/my_css.css>
+
+  <!-- JQuery -->
+  <script src=/libs/external/jquery-3.1.1.min.js></script>
+
+  <!-- Font-Awesome -->
+  <link rel="stylesheet" href=/libs/external/font-awesome-4.7.0/css/font-awesome.min.css>
+
+  <!-- Academic-Icons -->
+  <link rel="stylesheet" href=/libs/external/academicons-1.8.6/css/academicons.min.css>
+
+  <!-- Scripts -->
+  <script src=/libs/custom/my_js.js></script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href=/libs/makka.png>
+  <link rel="shortcut icon" type="image/png" href=/libs/makka.png>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7YM94T4RDX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7YM94T4RDX');
+  </script>
+
+  <!-- MathJax for mathematical notation -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    /* Blog-specific styles */
+    .blog-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .blog-header {
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .blog-title {
+      font-size: 3.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .blog-meta {
+      font-size: 14px;
+      color: var(--muted-text);
+      margin-bottom: 5px;
+    }
+
+    .blog-content {
+      font-size: 17px;
+      line-height: 1.8;
+      margin-bottom: 60px;
+    }
+
+    .blog-content h2 {
+      font-size: 2.4rem;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .blog-content h3 {
+      font-size: 2.0rem;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .blog-content p {
+      margin-bottom: 20px;
+    }
+
+    .blog-content ul, .blog-content ol {
+      margin-bottom: 20px;
+      padding-left: 30px;
+    }
+
+    .blog-content li {
+      margin-bottom: 8px;
+    }
+
+    .blog-content code {
+      background-color: var(--pre-bg);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 15px;
+      border: 1px solid var(--border-color);
+    }
+
+    .blog-content pre {
+      background-color: var(--pre-bg);
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    .blog-content pre code {
+      background-color: transparent;
+      padding: 0;
+      border: none;
+    }
+
+    .blog-content blockquote {
+      border-left: 4px solid var(--link-color);
+      padding-left: 20px;
+      margin-left: 0;
+      color: var(--muted-text);
+      font-style: italic;
+    }
+
+    .blog-footer {
+      padding-top: 30px;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      color: var(--muted-text);
+      font-size: 14px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: var(--link-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 750px) {
+      .blog-title {
+        font-size: 2.4rem;
+      }
+
+      .blog-content {
+        font-size: 16px;
+      }
+
+      .blog-content h2 {
+        font-size: 2.0rem;
+      }
+
+      .blog-content h3 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container">
+      <ul class="navbar-list">
+        <li class="navbar-item"><a class="navbar-link" href=/index.html#about>About</a></li>
+        <li class="navbar-item"><a class="navbar-link" href=/publications.html>Publications</a></li>
+        <li class="navbar-item"><a class="navbar-link" href=/index.html#service>Service</a></li>
+      </ul>
+      <div class="navbar-theme-toggle">
+        <span id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light theme">
+          <i id="theme-icon" class="fa fa-moon-o" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Blog Container -->
+  <div class="blog-container">
+    <!-- Blog Header -->
+    <div class="blog-header">
+      <h1 class="blog-title">Sample Blog Post Title</h1>
+      <div class="blog-meta">
+        <span>By Jiacheng Zhu</span> •
+        <span>December 22, 2025</span>
+      </div>
+    </div>
+
+    <!-- Blog Content -->
+    <article class="blog-content">
+      <h2>Introduction</h2>
+      <p>
+        This is a sample blog post demonstrating the lightweight design. You can write your content here with full support for various formatting options including <strong>bold text</strong>, <em>italic text</em>, and <code>inline code</code>.
+      </p>
+
+      <h2>Main Content</h2>
+      <p>
+        Here's how you can structure your blog posts with different elements:
+      </p>
+
+      <h3>Lists</h3>
+      <p>Unordered lists:</p>
+      <ul>
+        <li>First item with some detailed explanation</li>
+        <li>Second item with more context</li>
+        <li>Third item to round things out</li>
+      </ul>
+
+      <p>Ordered lists:</p>
+      <ol>
+        <li>Step one in a process</li>
+        <li>Step two with important details</li>
+        <li>Step three to complete the process</li>
+      </ol>
+
+      <h3>Code Blocks</h3>
+      <p>You can include code snippets:</p>
+      <pre><code>def hello_world():
+    print("Hello, World!")
+    return True</code></pre>
+
+      <h3>Mathematical Notation</h3>
+      <p>
+        You can write inline math like $f(x) = x^2 + 2x + 1$ or display equations:
+      </p>
+      <p>
+        $$\mathcal{L}(\theta) = \sum_{i=1}^{n} \log p(y_i | x_i, \theta)$$
+      </p>
+
+      <h3>Blockquotes</h3>
+      <blockquote>
+        This is a blockquote. Use it to highlight important quotes or key takeaways from your post.
+      </blockquote>
+
+      <h2>Conclusion</h2>
+      <p>
+        Replace this content with your actual blog post. The design is minimal and focuses on readability, matching the style of the reference blog while maintaining consistency with your personal website.
+      </p>
+    </article>
+
+    <!-- Blog Footer -->
+    <div class="blog-footer">
+      <p>&copy; 2025 Jiacheng Zhu. All rights reserved.</p>
+      <a href="/index.html" class="back-link">← Back to Homepage</a>
+    </div>
+  </div>
+
+</body>
+</html>

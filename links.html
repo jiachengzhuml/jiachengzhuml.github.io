@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Links | Jiacheng Zhu</title>
+  <meta name="description" content="Useful links curated by Jiacheng Zhu">
+  <meta name="author" content="Jiacheng Zhu">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT -->
+  <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet' type='text/css'>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href=/libs/external/skeleton/normalize.css>
+  <link rel="stylesheet" href=/libs/external/skeleton/skeleton.css>
+  <link rel="stylesheet" href=/libs/custom/my_css.css>
+
+  <!-- JQuery -->
+  <script src=/libs/external/jquery-3.1.1.min.js></script>
+
+  <!-- Font-Awesome -->
+  <link rel="stylesheet" href=/libs/external/font-awesome-4.7.0/css/font-awesome.min.css>
+
+  <!-- Academic-Icons -->
+  <link rel="stylesheet" href=/libs/external/academicons-1.8.6/css/academicons.min.css>
+
+  <!-- Scripts -->
+  <script src=/libs/custom/my_js.js></script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href=/libs/makka.png>
+  <link rel="shortcut icon" type="image/png" href=/libs/makka.png>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7YM94T4RDX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7YM94T4RDX');
+  </script>
+
+  <style>
+    /* Links page specific styles */
+    .links-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .links-header {
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .links-title {
+      font-size: 3.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .links-description {
+      font-size: 17px;
+      color: var(--muted-text);
+      line-height: 1.6;
+    }
+
+    .links-content {
+      margin-bottom: 60px;
+    }
+
+    .link-section {
+      margin-bottom: 50px;
+    }
+
+    .link-section h2 {
+      font-size: 2.4rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+      border-bottom: 2px solid var(--link-color);
+      padding-bottom: 10px;
+    }
+
+    .link-item {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: var(--paper-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    .link-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    [data-theme="dark"] .link-item:hover {
+      box-shadow: 0 2px 8px rgba(255,255,255,0.1);
+    }
+
+    .link-item-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .link-item-title a {
+      color: var(--link-color);
+      text-decoration: none;
+    }
+
+    .link-item-title a:hover {
+      text-decoration: underline;
+    }
+
+    .link-item-description {
+      font-size: 15px;
+      color: var(--muted-text);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .link-item-url {
+      font-size: 13px;
+      color: var(--muted-text);
+      font-family: 'Courier New', monospace;
+      margin-top: 8px;
+      word-break: break-all;
+    }
+
+    .links-footer {
+      padding-top: 30px;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      color: var(--muted-text);
+      font-size: 14px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: var(--link-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 750px) {
+      .links-title {
+        font-size: 2.4rem;
+      }
+
+      .link-section h2 {
+        font-size: 2.0rem;
+      }
+
+      .link-item-title {
+        font-size: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container">
+      <ul class="navbar-list">
+        <li class="navbar-item"><a class="navbar-link" href=/index.html#about>About</a></li>
+        <li class="navbar-item"><a class="navbar-link" href=/publications.html>Publications</a></li>
+        <li class="navbar-item"><a class="navbar-link" href=/index.html#service>Service</a></li>
+      </ul>
+      <div class="navbar-theme-toggle">
+        <span id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light theme">
+          <i id="theme-icon" class="fa fa-moon-o" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Links Container -->
+  <div class="links-container">
+    <!-- Links Header -->
+    <div class="links-header">
+      <h1 class="links-title">Useful Links</h1>
+      <p class="links-description">
+        A curated collection of resources, tools, and websites I find valuable for research, development, and learning.
+      </p>
+    </div>
+
+    <!-- Links Content -->
+    <div class="links-content">
+
+      <!-- Research & Publications Section -->
+      <div class="link-section">
+        <h2>Research & Publications</h2>
+
+        <div class="link-item">
+          <div class="link-item-title">
+            <a href="https://arxiv.org/" target="_blank">arXiv</a>
+          </div>
+          <p class="link-item-description">
+            Open-access archive for preprints in mathematics, physics, computer science, and more.
+          </p>
+          <div class="link-item-url">https://arxiv.org/</div>
+        </div>
+
+        <div class="link-item">
+          <div class="link-item-title">
+            <a href="https://scholar.google.com/" target="_blank">Google Scholar</a>
+          </div>
+          <p class="link-item-description">
+            Comprehensive search engine for scholarly literature across disciplines.
+          </p>
+          <div class="link-item-url">https://scholar.google.com/</div>
+        </div>
+
+        <div class="link-item">
+          <div class="link-item-title">
+            <a href="https://paperswithcode.com/" target="_blank">Papers with Code</a>
+          </div>
+          <p class="link-item-description">
+            Machine learning papers with code implementations, datasets, and benchmarks.
+          </p>
+          <div class="link-item-url">https://paperswithcode.com/</div>
+        </div>
+      </div>
+
+      <!-- Machine Learning Tools Section -->
+      <div class="link-section">
+        <h2>Machine Learning Tools</h2>
+
+        <div class="link-item">
+          <div class="link-item-title">
+            <a href="https://huggingface.co/" target="_blank">Hugging Face</a>
+          </div>
+          <p class="link-item-description">
+            Platform for machine learning models, datasets, and collaborative AI development.
+          </p>
+          <div class="link-item-url">https://huggingface.co/</div>
+        </div>
+
+        <div class="link-item">
+          <div class="link-item-title">
+            <a href="https://pytorch.org/" target="_blank">PyTorch</a>
+          </div>
+          <p class="link-item-description">
+            Open-source machine learning framework for deep learning research and production.
+          </p>
+          <div class="link-item-url">https://pytorch.org/</div>
+        </div>
+
+        <div class="link-item">
+          <div class="link-item-title">
+            <a href="https://www.tensorflow.org/" target="_blank">TensorFlow</a>
+          </div>
+          <p class="link-item-description">
+            End-to-end platform for machine learning development and deployment.
+          </p>
+          <div class="link-item-url">https://www.tensorflow.org/</div>
+        </div>
+      </div>
+
+      <!-- Development Resources Section -->
+      <div class="link-section">
+        <h2>Development Resources</h2>
+
+        <div class="link-item">
+          <div class="link-item-title">
+            <a href="https://github.com/" target="_blank">GitHub</a>
+          </div>
+          <p class="link-item-description">
+            Platform for version control and collaboration on software projects.
+          </p>
+          <div class="link-item-url">https://github.com/</div>
+        </div>
+
+        <div class="link-item">
+          <div class="link-item-title">
+            <a href="https://stackoverflow.com/" target="_blank">Stack Overflow</a>
+          </div>
+          <p class="link-item-description">
+            Q&A community for programmers to learn and share knowledge.
+          </p>
+          <div class="link-item-url">https://stackoverflow.com/</div>
+        </div>
+      </div>
+
+      <!-- Academic Conferences Section -->
+      <div class="link-section">
+        <h2>Academic Conferences</h2>
+
+        <div class="link-item">
+          <div class="link-item-title">
+            <a href="https://nips.cc/" target="_blank">NeurIPS</a>
+          </div>
+          <p class="link-item-description">
+            Conference on Neural Information Processing Systems - premier venue for ML research.
+          </p>
+          <div class="link-item-url">https://nips.cc/</div>
+        </div>
+
+        <div class="link-item">
+          <div class="link-item-title">
+            <a href="https://icml.cc/" target="_blank">ICML</a>
+          </div>
+          <p class="link-item-description">
+            International Conference on Machine Learning - leading conference in machine learning.
+          </p>
+          <div class="link-item-url">https://icml.cc/</div>
+        </div>
+
+        <div class="link-item">
+          <div class="link-item-title">
+            <a href="https://iclr.cc/" target="_blank">ICLR</a>
+          </div>
+          <p class="link-item-description">
+            International Conference on Learning Representations - focused on deep learning.
+          </p>
+          <div class="link-item-url">https://iclr.cc/</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Links Footer -->
+    <div class="links-footer">
+      <p>Last updated: December 22, 2025</p>
+      <p>&copy; 2025 Jiacheng Zhu. All rights reserved.</p>
+      <a href="/index.html" class="back-link">← Back to Homepage</a>
+    </div>
+  </div>
+
+</body>
+</html>
