@@ -1,6 +1,6 @@
 {
  "meta": {
-  "built": "2026-09-22",
+  "built": "2026-09-23",
   "snapshot_v1": "2026-09-05",
   "snapshot_v2": "2026-09-22",
   "task_entries": 52,
@@ -286,8 +286,8 @@
      "relation": "Direct task evidence"
     }
    ],
+   "tag": "spot-checked",
    "audit": "task-level",
-   "tag": "prior-note",
    "count": 1
   },
   {
@@ -312,8 +312,8 @@
      "relation": "Direct task evidence"
     }
    ],
+   "tag": "spot-checked",
    "audit": "task-level",
-   "tag": "prior-note",
    "count": 1
   },
   {
@@ -344,8 +344,8 @@
      "relation": "Application request coalescing; not an actor/learner runtime"
     }
    ],
+   "tag": "spot-checked",
    "audit": "task-level",
-   "tag": "prior-note",
    "count": 1
   },
   {
@@ -1411,10 +1411,10 @@
    "benchmark": "weirdml",
    "count": 11,
    "audit": "family-level",
-   "tag": "agent-reported",
+   "tag": "spot-checked",
    "title": "Build ML pipelines for unfamiliar data under a token budget",
    "format": "Bespoke sandbox; agents run in their native CLI harnesses",
-   "hardware": "v3 not stated; v2 used a 12-GB TITAN V in Docker with 600 s per execution",
+   "hardware": "v3: a GPU sandbox with four CPUs and one GPU, scoring runs of 120–1,200 s (task page, 16 September 2026); v2 used a 12-GB TITAN V in Docker with 600 s per execution",
    "edit": "Eleven hand-made tasks such as discovering shape classes in unlabeled point clouds, detecting ships in degraded sensor images, or writing a radio-telescope calibration pipeline; up to ten submissions per task with a 500k–50M token budget.",
    "verify": "Task-specific hidden references (accuracy, box tightness); score is 0.8 × normalized area under the best-so-far curve on a log-token axis plus 0.2 × final best, with hint penalties.",
    "boundary": "Non-LLM machine learning and data analysis. It measures whether an agent can explore data and train small models, not LLM training or serving infrastructure. No public code repository; task details are partly hidden.",
@@ -1443,7 +1443,7 @@
    "benchmark": "edgebench",
    "count": 51,
    "audit": "family-level",
-   "tag": "agent-reported",
+   "tag": "spot-checked",
    "title": "Learn from environment feedback over 12-hour horizons",
    "format": "SForge: work container + judge container + host judge server",
    "hardware": "Not documented per task; spans CPU-only RL to GPU ML workloads",
@@ -1564,7 +1564,7 @@
    "id": "tb21-gpt2-codegolf",
    "benchmark": "tb21",
    "audit": "task-level",
-   "tag": "agent-reported",
+   "tag": "spot-checked",
    "title": "Write GPT-2 inference in under 5,000 bytes of C",
    "format": "Harbor",
    "hardware": "CPU (task.toml: gpus = 0)",
@@ -1674,7 +1674,7 @@
    "id": "tb21-hf-model-inference",
    "benchmark": "tb21",
    "audit": "task-level",
-   "tag": "agent-reported",
+   "tag": "spot-checked",
    "title": "Serve a Hugging Face model behind a Flask endpoint",
    "format": "Harbor",
    "hardware": "CPU (task.toml: gpus = 0)",
@@ -1836,9 +1836,9 @@
    "pinned": "https://htihle.github.io/weirdml_tasks.html",
    "corpus": "11 hand-made agentic tasks (v3); v2 had 19 tasks of writing PyTorch code that trains a model on a novel dataset",
    "format": "Bespoke sandbox with agents in their native CLI harnesses; no public code repository",
-   "hardware": "v2: Docker with a 12-GB TITAN V; v3 hardware not stated",
+   "hardware": "v2: Docker with a 12-GB TITAN V; v3: four CPUs and one GPU per sandbox (task page, 16 September 2026)",
    "audit": "family-level",
-   "tag": "agent-reported",
+   "tag": "spot-checked",
    "selected": 1,
    "adoption": "Epoch AI runs v2 in its Benchmarking Hub and includes WeirdML in the Epoch Capabilities Index. No frontier model card found citing it."
   },
@@ -1854,7 +1854,7 @@
    "format": "SForge: a work container plus a judge container per task, with a host-side judge server",
    "hardware": "Per-task allocations not documented; tasks span CPU-only RL to GPU ML workloads",
    "audit": "family-level",
-   "tag": "agent-reported",
+   "tag": "spot-checked",
    "selected": 1,
    "adoption": "Self-reported leaderboard. Not an edge-device benchmark despite the name; the on-device candidates (MLPerf Inference Edge Agentic, edge-llm-bench) are engine performance harnesses, not agent tasks."
   },

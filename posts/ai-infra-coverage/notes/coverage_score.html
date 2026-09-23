@@ -1,0 +1,153 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>coverage score</title><meta name="viewport" content="width=device-width, initial-scale=1"><style>body{font:15.5px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif;max-width:880px;margin:36px auto;padding:0 16px;color:#111}a{color:#1c5cab}h1{font-size:24px;line-height:1.25}h2{font-size:19px;margin-top:28px}table{border-collapse:collapse;font-size:13.5px;margin:12px 0}th,td{border:1px solid #d9dee5;padding:5px 8px;text-align:left;vertical-align:top}code{font:13px ui-monospace,Menlo,monospace;background:#f1f3f6;padding:1px 4px;border-radius:3px}pre{background:#f1f3f6;padding:10px;overflow:auto}.nav{font:12px ui-monospace,Menlo,monospace;color:#666;margin-bottom:18px}</style></head><body><div class="nav"><a href="index.html">notes</a> · <a href="../index.html">overview</a> · <a href="coverage_score.md.txt">raw markdown</a></div><h1>Per-benchmark coverage score — audit note (23 September 2026)</h1>
+<p>The overview's lead figure scores each primary benchmark by the number of distinct stage × layer cells, out of 35, in which at least one of its task verifiers <strong>executes the real LLM workload</strong> (a training run, a finetune, or a kernel on the declared hardware). This is the <code>measured</code> evidence class of the 5 September method note. A lighter extension adds cells reached only by <code>bounded</code> (unit or artifact checks in a narrower harness) or <code>adjacent</code> (a fixed dependency, a simulation, or a nearby non-LLM task) evidence. Family entries count once. The score counts cells, never tasks, so a task that reaches two cells is not double-counted and per-cell task counts are never summed.</p>
+<h2>Scores</h2>
+<table>
+<thead>
+<tr>
+<th>Benchmark</th>
+<th>Entries</th>
+<th>Cells with any evidence</th>
+<th>Cells measured</th>
+<th>Score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RE-Bench</td>
+<td>7</td>
+<td>12</td>
+<td>10</td>
+<td>29%</td>
+</tr>
+<tr>
+<td>MLS-Bench</td>
+<td>14</td>
+<td>13</td>
+<td>7</td>
+<td>20%</td>
+</tr>
+<tr>
+<td>Terminal-Bench 4.0</td>
+<td>8</td>
+<td>12</td>
+<td>5</td>
+<td>14%</td>
+</tr>
+<tr>
+<td>RSI-Exam</td>
+<td>8</td>
+<td>10</td>
+<td>5</td>
+<td>14%</td>
+</tr>
+<tr>
+<td>PostTrainBench</td>
+<td>1 (×28)</td>
+<td>4</td>
+<td>1</td>
+<td>3%</td>
+</tr>
+<tr>
+<td>InferenceBench</td>
+<td>1 (×4)</td>
+<td>4</td>
+<td>1</td>
+<td>3%</td>
+</tr>
+<tr>
+<td>Terminal-Bench 2.1</td>
+<td>8</td>
+<td>6</td>
+<td>0</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>DeepSWE</td>
+<td>3</td>
+<td>3</td>
+<td>0</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>WeirdML v3</td>
+<td>1 (×11)</td>
+<td>2</td>
+<td>0</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>EdgeBench</td>
+<td>1 (×51)</td>
+<td>2</td>
+<td>0</td>
+<td>0%</td>
+</tr>
+<tr>
+<td><strong>Union of the ten</strong></td>
+<td>52</td>
+<td>25</td>
+<td>12</td>
+<td><strong>34%</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>Why four benchmarks score zero (verifiers re-read on 23 September)</h2>
+<ul>
+<li><strong>Terminal-Bench 2.1</strong> (commit <code>7131e43</code>): every task declares <code>gpus = 0</code>; GPU tasks arrived in 3.0. The tensor-parallel task starts gloo process groups on CPU at world sizes 1, 2 and 4 and compares a 2 × 64 input against <code>nn.Linear</code> with <code>allclose</code>. The pipeline task builds a 4-layer LLaMA (hidden 512) on CPU and compares hooked activations with a reference. <code>gpt2-codegolf</code> compiles the C file, generates a few tokens and string-matches. <code>hf-model-inference</code> loads a Hugging Face sentiment model and checks six POST responses. The batching task is scored by an analytical cost model. Five cells are <code>bounded</code>, one <code>adjacent</code>, none <code>measured</code>.</li>
+<li><strong>DeepSWE v1.1</strong> (commit <code>0b9fabb</code>): all 113 tasks declare <code>gpus = 0</code>. The three infrastructure-adjacent tasks run <code>go test -run TestCoalesceValues</code> (Helm), the Arcane drift-detection service and handler tests, and <code>pytest test_coalesce.py</code> (LangChain). Real deployment tooling, but unit tests, and adjacent to LLM infrastructure.</li>
+<li><strong>WeirdML v3</strong>: a real GPU sandbox (four CPUs and one GPU per the task page of 16 September 2026), but the tasks are point-cloud classification, ship detection, radio-telescope calibration and the 17-task "Bonanza". Real training of non-LLM models; no LLM life-cycle stage is touched.</li>
+<li><strong>EdgeBench</strong>: the 51 public tasks in the README table are Scientific &amp; ML (4: bipedal-walker RL, gravity inversion, GNN node classification, source inversion), Systems &amp; SE (12: ANN vector search, VLIW kernel optimization, ffmpeg swscale, git in Zig, and others), Optimization (15), Knowledge (4), Formal (8) and Games (8). None trains, serves or checkpoints an LLM or writes a GPU kernel.</li>
+</ul>
+<h2>The 35 cells and the 10 that no task reaches</h2>
+<p>A cell is one life-cycle stage (data; pretrain &amp; midtrain; post-train; agentic RL; serve &amp; operate) crossed with one infrastructure layer (methods &amp; agent logic; data &amp; evaluation; training &amp; rollout engines; distributed coordination; memory, state &amp; recovery; kernels &amp; device execution; cluster &amp; isolation). Each layer carries a contract stating what a test there has to do; a task lands in a cell when its verifier reaches that stage and exercises code at that layer. Fifteen of the 52 entries sit in two stages.</p>
+<table>
+<thead>
+<tr>
+<th>Empty cell</th>
+<th>What documented production systems do there</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data × engines</td>
+<td>Tokenization and dataloader throughput (Dolma, litdata, Megatron loaders)</td>
+</tr>
+<tr>
+<td>Data × state</td>
+<td>Loader checkpoint and exactly-once resume (worker ownership in OLMo and SmolLM3 tooling)</td>
+</tr>
+<tr>
+<td>Data × kernels</td>
+<td>GPU dedup and tokenization kernels (NeMo Curator style pipelines)</td>
+</tr>
+<tr>
+<td>Data × cluster</td>
+<td>Corpus builds on Slurm or Ray clusters (Dolma 3, Datatrove)</td>
+</tr>
+<tr>
+<td>Pretrain × cluster</td>
+<td>Node health checks and cordoning; 419 unexpected interruptions in Llama 3; OLMo 2 host failures</td>
+</tr>
+<tr>
+<td>Post-train × data &amp; evaluation</td>
+<td>Sample mixing and mask semantics (MiMo Sample Mixer; tool-token masking in slime)</td>
+</tr>
+<tr>
+<td>Post-train × cluster</td>
+<td>Trainer and sampler job placement (colocated verl; disaggregated GLM-5)</td>
+</tr>
+<tr>
+<td>Agentic RL × distributed</td>
+<td>Weight publication to rollout replicas (checkpoint-engine; slime delta sync)</td>
+</tr>
+<tr>
+<td>Agentic RL × kernels</td>
+<td>Trainer/sampler numeric parity (MiMo MXFP4 QDQ; R3 routing replay)</td>
+</tr>
+<tr>
+<td>Agentic RL × cluster</td>
+<td>Sandbox fleets (MiMo Harness Pool; Mercor MCP fleets; SkyRL on Modal)</td>
+</tr>
+</tbody>
+</table>
+<p>Sources for the production examples are the pipeline, RL-loop and agentic tables of the overview and deep-dive pages.</p></body></html>
