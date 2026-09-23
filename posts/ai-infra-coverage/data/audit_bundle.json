@@ -3,20 +3,27 @@
   "built": "2026-09-23",
   "snapshot_v1": "2026-09-05",
   "snapshot_v2": "2026-09-22",
-  "task_entries": 52,
-  "task_instances": 142,
-  "mappings": 106,
+  "task_entries": 74,
+  "task_instances": 164,
+  "mappings": 141,
   "by_benchmark": {
-   "tb4": 8,
-   "deepswe": 3,
-   "mls": 14,
+   "tb4": 9,
+   "deepswe": 8,
+   "mls": 28,
    "re": 7,
-   "rsi": 8,
+   "rsi": 9,
    "ptb": 1,
    "infbench": 1,
    "weirdml": 1,
    "edgebench": 1,
-   "tb21": 8
+   "tb21": 9
+  },
+  "census": {
+   "screened": 537,
+   "L": 97,
+   "A": 161,
+   "O": 279,
+   "public": 537
   }
  },
  "tasks": [
@@ -1695,6 +1702,701 @@
     }
    ],
    "count": 1
+  },
+  {
+   "id": "math-eval-grader",
+   "benchmark": "tb4",
+   "title": "Build a symbolic grader for math LM evaluation",
+   "format": "Harbor",
+   "hardware": "1 × H100 (8 CPUs, 16 GB); verifier tests need no GPU",
+   "edit": "Extracts gold answers from answer-key PDFs, runs a pinned 1.5B math instruct model greedily on 48 problems on the H100, writes a SymPy-only answer-equivalence grader for many answer formats, and records graded predictions.",
+   "verify": "CPU-only verifier: extracted gold must match a committed key (46 of 48); the submitted grader runs sandboxed on a hidden 378-case labelled suite (372 needed); raw generations are spot-checked against H100 oracle answers and an accuracy band.",
+   "boundary": "Nothing reruns the model or measures decoding; no training, reward optimization or serving-engine change; the grader is judged on fixed labelled pairs, not inside an RL loop.",
+   "prerequisites": "Public Docker recipe; package/model downloads depend on the task. Required CPU/GPU resources must be supplied. This audit did not build or execute the task.",
+   "taskUrl": "https://github.com/harbor-framework/terminal-bench/tree/452bf305c6daa62fc59061d22133a7cbc7c1572e/tasks/math-eval-grader",
+   "containerUrl": "https://github.com/harbor-framework/terminal-bench/blob/452bf305c6daa62fc59061d22133a7cbc7c1572e/tasks/math-eval-grader/environment/Dockerfile",
+   "verifierUrl": "https://github.com/harbor-framework/terminal-bench/blob/452bf305c6daa62fc59061d22133a7cbc7c1572e/tasks/math-eval-grader/tests/test.sh",
+   "resourceUrl": "https://github.com/harbor-framework/terminal-bench/blob/452bf305c6daa62fc59061d22133a7cbc7c1572e/tasks/math-eval-grader/task.toml",
+   "mappings": [
+    {
+     "stage": "data",
+     "layer": "dataeval",
+     "kind": "bounded",
+     "relation": "Direct: gold extraction and answer-equivalence grader checked on hidden labelled cases"
+    },
+    {
+     "stage": "serve",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Pinned HF greedy decoding run by agent on H100; outputs only spot-checked"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "spot-checked",
+   "count": 1,
+   "census_evidence": "tasks/math-eval-grader/tests/test_outputs.py; tasks/math-eval-grader/tests/Dockerfile",
+   "census_confidence": "medium"
+  },
+  {
+   "id": "tb21-mteb-retrieve",
+   "benchmark": "tb21",
+   "title": "Retrieve a document with a pinned embedding model",
+   "format": "Harbor",
+   "hardware": "CPU (1 CPU, 2 GB)",
+   "edit": "Loads a specific revision of a small Chinese BGE embedding model through the installed mteb package, encodes the query and each line of a text file, ranks by cosine similarity and writes the fifth-ranked line.",
+   "verify": "A pytest reads the output file and requires exactly one line equal to the expected document; the model is not rerun, and no scores, timing or intermediate embeddings are checked.",
+   "boundary": "No serving engine, batching, training or evaluation metric; the embedding runtime is a fixed CPU dependency and only the final retrieved line is scored.",
+   "prerequisites": "Public Harbor package pinned to commit 7131e43 (2026-08-11; read 2026-09-21); Docker image pulled from a registry; CPU only. This audit did not build or execute the task.",
+   "taskUrl": "https://github.com/harbor-framework/terminal-bench-2-1/tree/7131e4375048a0e408a8fb404b5f499d726b695b/tasks/mteb-retrieve",
+   "containerUrl": "https://github.com/harbor-framework/terminal-bench-2-1/blob/7131e4375048a0e408a8fb404b5f499d726b695b/tasks/mteb-retrieve/environment/Dockerfile",
+   "verifierUrl": "https://github.com/harbor-framework/terminal-bench-2-1/tree/7131e4375048a0e408a8fb404b5f499d726b695b/tasks/mteb-retrieve/tests",
+   "resourceUrl": "https://github.com/harbor-framework/terminal-bench-2-1/blob/7131e4375048a0e408a8fb404b5f499d726b695b/tasks/mteb-retrieve/task.toml",
+   "mappings": [
+    {
+     "stage": "serve",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Fixed embedding model run through mteb on CPU; no engine work"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "spot-checked",
+   "count": 1,
+   "census_evidence": "tasks/mteb-retrieve/tests/test_outputs.py",
+   "census_confidence": "medium"
+  },
+  {
+   "id": "claude-code-by-agents-recursive-delegation",
+   "benchmark": "deepswe",
+   "title": "Feed sub-agent results back to delegating agents",
+   "format": "Harbor",
+   "hardware": "CPU (2 CPUs, 8 GB)",
+   "edit": "Extends the backend chat handler so a delegate_task tool call runs the named sub-agent, streams its output, returns a matching tool_result to the delegating agent, and surfaces errors for missing agents, failed sub-agents and delegation loops.",
+   "verify": "Vitest runs a held-out backend handler test with the Anthropic and Claude Code SDKs mocked, plus existing backend and frontend suites; binary reward requires all target tests to pass and no regressions.",
+   "boundary": "No real model calls (the verifier has no network), no agent policy training, rollout runtime or evaluation of agent quality.",
+   "prerequisites": "Public Docker recipe; package/model downloads depend on the task. Required CPU/GPU resources must be supplied. This audit did not build or execute the task.",
+   "taskUrl": "https://github.com/datacurve-ai/deep-swe/tree/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/claude-code-by-agents-recursive-delegation",
+   "containerUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/claude-code-by-agents-recursive-delegation/environment/Dockerfile",
+   "verifierUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/claude-code-by-agents-recursive-delegation/tests/test.sh",
+   "resourceUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/claude-code-by-agents-recursive-delegation/task.toml",
+   "mappings": [
+    {
+     "stage": "agentic",
+     "layer": "methods",
+     "kind": "adjacent",
+     "relation": "Delegation logic around fixed, mocked LLM agents; no policy training"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "spot-checked",
+   "count": 1,
+   "census_evidence": "tasks/claude-code-by-agents-recursive-delegation/tests/test.sh; tasks/claude-code-by-agents-recursive-delegation/tests/test.patch",
+   "census_confidence": "high"
+  },
+  {
+   "id": "go-genai-streamed-function-args",
+   "benchmark": "deepswe",
+   "title": "Assemble streamed function-call arguments in the Gemini SDK",
+   "format": "Harbor",
+   "hardware": "CPU (2 CPUs, 8 GB)",
+   "edit": "Changes the Go Gen AI SDK so streamed function calls accumulate partial argument fragments by JSON path into complete Args, reset per call, reject conflicting shapes, and store completed calls in chat history.",
+   "verify": "Offline Go unit tests (-mode=unit) replay streamed responses from a local fake HTTP/websocket server for content generation, live sessions and chats, plus existing function-call and streaming tests; binary reward.",
+   "boundary": "No model or inference server runs; the serving engine's own tool-call parser, decoding and any agent tool loop are not exercised.",
+   "prerequisites": "Public Docker recipe; package/model downloads depend on the task. Required CPU/GPU resources must be supplied. This audit did not build or execute the task.",
+   "taskUrl": "https://github.com/datacurve-ai/deep-swe/tree/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/go-genai-streamed-function-args",
+   "containerUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/go-genai-streamed-function-args/environment/Dockerfile",
+   "verifierUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/go-genai-streamed-function-args/tests/test.sh",
+   "resourceUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/go-genai-streamed-function-args/task.toml",
+   "mappings": [
+    {
+     "stage": "serve",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Client-side SDK assembles streamed function-call arguments; no serving engine"
+    },
+    {
+     "stage": "agentic",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Tool-call plumbing an agent loop would consume; no loop runs"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "spot-checked",
+   "count": 1,
+   "review_note": "Reviewer changed serve/engines from bounded to adjacent: the edited code is a client SDK replaying fake streams, not a serving engine.",
+   "census_evidence": "tasks/go-genai-streamed-function-args/tests/test.sh; tasks/go-genai-streamed-function-args/tests/test.patch",
+   "census_confidence": "medium"
+  },
+  {
+   "id": "helm-unified-manifest-stream",
+   "benchmark": "deepswe",
+   "title": "Emit a deterministic Helm manifest stream",
+   "format": "Harbor",
+   "hardware": "CPU (2 CPUs, 8 GB)",
+   "edit": "Changes Helm's action and command code so template, install/upgrade dry-run and get-manifest output one stream sorted by source path, keeping hooks and in-file document order and tidying trailing newlines and success text.",
+   "verify": "Go tests in pkg/cmd compare rendered command output for purpose-built test charts against golden files, plus existing engine template-function tests; Helm's command test harness runs without a live cluster.",
+   "boundary": "Does not install to or query a Kubernetes cluster, schedule workloads or touch container runtimes; output ordering only.",
+   "prerequisites": "Public Docker recipe; package/model downloads depend on the task. Required CPU/GPU resources must be supplied. This audit did not build or execute the task.",
+   "taskUrl": "https://github.com/datacurve-ai/deep-swe/tree/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/helm-unified-manifest-stream",
+   "containerUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/helm-unified-manifest-stream/environment/Dockerfile",
+   "verifierUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/helm-unified-manifest-stream/tests/test.sh",
+   "resourceUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/helm-unified-manifest-stream/task.toml",
+   "mappings": [
+    {
+     "stage": "serve",
+     "layer": "cluster",
+     "kind": "bounded",
+     "relation": "Direct: Helm command output checked with golden files, no cluster"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "tasks/helm-unified-manifest-stream/tests/test.sh; tasks/helm-unified-manifest-stream/tests/test.patch",
+   "census_confidence": "high"
+  },
+  {
+   "id": "kgateway-consistent-hash-policy",
+   "benchmark": "deepswe",
+   "title": "Add consistent-hash load balancing to kgateway policies",
+   "format": "Harbor",
+   "hardware": "CPU (2 CPUs, 8 GB)",
+   "edit": "Extends the TrafficPolicy API, CRDs and translator plugin so header, cookie, query, filter-state and source-IP hash settings become ordered, deduplicated Envoy route hash policies, including disable and multi-policy merge rules.",
+   "verify": "Go translator tests feed Gateway API and TrafficPolicy YAML through the gateway translator and compare the generated Envoy configuration with golden output, plus the existing basic translation suite.",
+   "boundary": "No Kubernetes cluster, Envoy proxy or live traffic; no LLM-aware routing, KV-cache affinity or AI-backend features.",
+   "prerequisites": "Public Docker recipe; package/model downloads depend on the task. Required CPU/GPU resources must be supplied. This audit did not build or execute the task.",
+   "taskUrl": "https://github.com/datacurve-ai/deep-swe/tree/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/kgateway-consistent-hash-policy",
+   "containerUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/kgateway-consistent-hash-policy/environment/Dockerfile",
+   "verifierUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/kgateway-consistent-hash-policy/tests/test.sh",
+   "resourceUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/kgateway-consistent-hash-policy/task.toml",
+   "mappings": [
+    {
+     "stage": "serve",
+     "layer": "cluster",
+     "kind": "bounded",
+     "relation": "Direct: CRD-to-Envoy translation checked with golden files, no live cluster"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "tasks/kgateway-consistent-hash-policy/tests/test.sh; tasks/kgateway-consistent-hash-policy/tests/test.patch",
+   "census_confidence": "medium"
+  },
+  {
+   "id": "ytt-jsonpath-query-api",
+   "benchmark": "deepswe",
+   "title": "Add JSONPath queries to ytt templates",
+   "format": "Harbor",
+   "hardware": "CPU (2 CPUs, 8 GB)",
+   "edit": "Adds JSONPath querying over ordered maps, covering dot and bracket access, unions, recursive descent, filters, length and end-relative indexing, with typed syntax errors, and exposes query functions to ytt's Starlark templates.",
+   "verify": "Go unit tests for the orderedmap and yttlibrary packages, including held-out JSONPath and Starlark-binding tests, plus the existing suites of both packages.",
+   "boundary": "Generic data querying only: no Kubernetes resources, manifests, deployment or cluster behaviour are rendered or checked.",
+   "prerequisites": "Public Docker recipe; package/model downloads depend on the task. Required CPU/GPU resources must be supplied. This audit did not build or execute the task.",
+   "taskUrl": "https://github.com/datacurve-ai/deep-swe/tree/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/ytt-jsonpath-query-api",
+   "containerUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/ytt-jsonpath-query-api/environment/Dockerfile",
+   "verifierUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/ytt-jsonpath-query-api/tests/test.sh",
+   "resourceUrl": "https://github.com/datacurve-ai/deep-swe/blob/0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea/tasks/ytt-jsonpath-query-api/task.toml",
+   "mappings": [
+    {
+     "stage": "serve",
+     "layer": "cluster",
+     "kind": "bounded",
+     "relation": "Rule 8 analogy: templating-tool library tested; no Kubernetes semantics exercised"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "tasks/ytt-jsonpath-query-api/tests/test.sh; tasks/ytt-jsonpath-query-api/tests/test.patch",
+   "census_confidence": "low"
+  },
+  {
+   "id": "agent-tool-reasoning",
+   "benchmark": "mls",
+   "title": "Design a tool-use search policy for LLM agents",
+   "format": "Harbor",
+   "hardware": "CPU + external LLM APIs",
+   "edit": "Rewrites the search method that picks which tool-call node to expand, when to rank candidates or backtrack, and when to stop, under a 60-query cap per task.",
+   "verify": "Runs 50 fixed I1-instruction queries against a virtual API server with DeepSeek-chat and two Qwen2.5 backbones; scores the self-reported valid-answer rate plus a judged pass rate that the Harbor run never computes.",
+   "boundary": "No policy training, serving or multi-turn RL; backbones and judge are fixed APIs; in Harbor the missing judged metric forces the reward to zero.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__agent-tool-reasoning",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__agent-tool-reasoning/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__agent-tool-reasoning/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__agent-tool-reasoning/task.toml",
+   "mappings": [
+    {
+     "stage": "agentic",
+     "layer": "methods",
+     "kind": "adjacent",
+     "relation": "Fixed API backbones; agent edits tree search and backtracking only"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__agent-tool-reasoning/tests/{meta/score_spec.py, meta/parser.py, eval/scripts/train.sh, eval/scripts/_common.sh}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "dlm-dkv-policy",
+   "benchmark": "mls",
+   "title": "Design KV cache reuse for diffusion LM inference",
+   "format": "Harbor",
+   "hardware": "1 × GPU (H100 default)",
+   "edit": "Rewrites the cache-plan policy hooks: block schedule, query rows to recompute, per-layer refresh or reuse, attention probes, the token commit rule and post-step state updates.",
+   "verify": "Runs LLaDA-8B-Instruct on MATH-500, HumanEval and ARC-Challenge with the policy; accuracy acts as a soft gate while harness-counted reuse ratio and wall-clock tokens per second are scored.",
+   "boundary": "Single-GPU, one-request Hugging Face rollouts; reuse is harness work accounting, not memory savings; no batching, paging or serving engine.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__dlm-dkv-policy",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__dlm-dkv-policy/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__dlm-dkv-policy/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__dlm-dkv-policy/task.toml",
+   "mappings": [
+    {
+     "stage": "serve",
+     "layer": "state",
+     "kind": "measured",
+     "relation": "Direct: cache refresh and reuse policy exercised in real LLaDA rollouts"
+    },
+    {
+     "stage": "serve",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Fixed rollout harness; agent changes only the cache-plan policy"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "spot-checked",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__dlm-dkv-policy/tests/{meta/score_spec.py, meta/pristine/dLLM-cache/custom_dlm_eval.py, eval/scripts/math.sh}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "llm-dllm-demask-strategy",
+   "benchmark": "mls",
+   "title": "Design demasking strategies for diffusion language models",
+   "format": "Harbor",
+   "hardware": "2 × GPU (1-GPU runs; H100 default)",
+   "edit": "Rewrites the demasking decoder: how many masked positions to commit per step, which positions, and which tokens, for both block-wise and fully parallel decoding.",
+   "verify": "Runs LLaDA-8B-Instruct on MATH-500 and HumanEval and Dream-7B on 256 C4 continuations; scores accuracy, GPT-2-large perplexity, MAUVE, diversity and average denoising steps.",
+   "boundary": "Step counts are returned by the submitted decoder, not counted independently; no KV caching, batching or wall-clock throughput.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-dllm-demask-strategy",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-dllm-demask-strategy/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-dllm-demask-strategy/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-dllm-demask-strategy/task.toml",
+   "mappings": [
+    {
+     "stage": "serve",
+     "layer": "methods",
+     "kind": "measured",
+     "relation": "Direct: decoding strategy evaluated with real diffusion-LM generation"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "spot-checked",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__llm-dllm-demask-strategy/tests/{meta/score_spec.py, meta/pristine/LLaDA/custom_demask_eval.py, eval/scripts/llada_math.sh, eval/scripts/dream_text.sh}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "llm-pretrain-bitlinear",
+   "benchmark": "mls",
+   "title": "Design native low-bit linear layers for GPT pretraining",
+   "format": "Harbor",
+   "hardware": "4 × H100 profile (2 × H200); single node",
+   "edit": "Rewrites the weight and activation quantization functions and the BitLinear module that replaces every linear projection in a 24-layer GPT, plus a small hyperparameter override dictionary.",
+   "verify": "Reruns 13,535-step, 4-GPU DDP pretraining of a 345M GPT on ClimbMix after a parameter-cap check; scores validation loss, WikiText-2 and LAMBADA perplexity and four zero-shot lm-eval tasks.",
+   "boundary": "Discreteness of forward weights is never checked; no low-bit kernels, memory or speed measured; optimizer, data and parallelism are fixed.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-bitlinear",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-bitlinear/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-bitlinear/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-bitlinear/task.toml",
+   "mappings": [
+    {
+     "stage": "pretrain",
+     "layer": "methods",
+     "kind": "measured",
+     "relation": "Direct: quantizer design scored through a real 345M pretraining run"
+    },
+    {
+     "stage": "pretrain",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Uses a fixed nanoGPT DDP training scaffold"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "spot-checked",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__llm-pretrain-bitlinear/tests/{meta/score_spec.py, eval/scripts/gpt_345m.sh, eval/scripts/lm_eval_345m.sh, meta/budget_check.py}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "llm-pretrain-embedding",
+   "benchmark": "mls",
+   "title": "Redesign token embeddings for GPT pretraining",
+   "format": "Harbor",
+   "hardware": "4 × H100 profile (2 × H200); single node",
+   "edit": "Rewrites the token-embedding module: token and position representations, weight tying with the output head, extra hashed or n-gram sources, and optional per-layer value embeddings.",
+   "verify": "Reruns 12,030-step 345M GPT pretraining on 4 GPUs after a 1.05x parameter-cap check; scores validation loss, WikiText-2 and LAMBADA perplexity and zero-shot lm-eval accuracy.",
+   "boundary": "Tokenizer and corpus are fixed; no data-pipeline, parallelism or serving work; a single seed is run.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-embedding",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-embedding/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-embedding/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-embedding/task.toml",
+   "mappings": [
+    {
+     "stage": "pretrain",
+     "layer": "methods",
+     "kind": "measured",
+     "relation": "Direct: embedding design scored through a real 345M pretraining run"
+    },
+    {
+     "stage": "pretrain",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Uses a fixed nanoGPT DDP training scaffold"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__llm-pretrain-embedding/tests/{meta/score_spec.py, eval/scripts/gpt_345m.sh, eval/scripts/lm_eval_345m.sh, meta/budget_check.py}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "llm-pretrain-linear-attention",
+   "benchmark": "mls",
+   "title": "Design subquadratic attention for GPT pretraining",
+   "format": "Harbor",
+   "hardware": "4 × H100 profile (2 × H200); single node",
+   "edit": "Replaces causal softmax attention and the transformer block with a linear or recurrent sequence mixer, optionally importing flash-linear-attention Triton layers.",
+   "verify": "Reruns 13,535-step 345M GPT pretraining on 4 GPUs after a parameter-cap check; scores validation loss, perplexity and zero-shot lm-eval accuracy.",
+   "boundary": "Subquadratic cost is never timed; kernels come from a library; no long-context or inference evaluation.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-linear-attention",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-linear-attention/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-linear-attention/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-linear-attention/task.toml",
+   "mappings": [
+    {
+     "stage": "pretrain",
+     "layer": "methods",
+     "kind": "measured",
+     "relation": "Direct: sequence mixer scored through a real 345M pretraining run"
+    },
+    {
+     "stage": "pretrain",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Uses a fixed nanoGPT DDP training scaffold"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__llm-pretrain-linear-attention/tests/{meta/score_spec.py, eval/scripts/gpt_345m.sh, eval/scripts/lm_eval_345m.sh, meta/budget_check.py}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "llm-pretrain-lr-schedule",
+   "benchmark": "mls",
+   "title": "Design a learning-rate schedule for GPT pretraining",
+   "format": "Harbor",
+   "hardware": "4 × H100 profile (2 × H200); single node",
+   "edit": "Rewrites the per-iteration learning-rate function (warmup, stable phase, decay shape and floor) and may override a few optimizer hyperparameters.",
+   "verify": "Reruns 12,030-step 345M GPT pretraining on 4 GPUs; scores validation loss, WikiText-2 and LAMBADA perplexity and zero-shot lm-eval accuracy.",
+   "boundary": "Step budget, optimizer and data are fixed; no checkpoint continuation, resume or annealing-from-checkpoint scenario.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-lr-schedule",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-lr-schedule/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-lr-schedule/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-lr-schedule/task.toml",
+   "mappings": [
+    {
+     "stage": "pretrain",
+     "layer": "methods",
+     "kind": "measured",
+     "relation": "Direct: schedule scored through a real 345M pretraining run"
+    },
+    {
+     "stage": "pretrain",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Uses a fixed nanoGPT DDP training scaffold"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__llm-pretrain-lr-schedule/tests/{meta/score_spec.py, eval/scripts/gpt_345m.sh, eval/scripts/lm_eval_345m.sh}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "llm-pretrain-mlp",
+   "benchmark": "mls",
+   "title": "Design the feed-forward block for GPT pretraining",
+   "format": "Harbor",
+   "hardware": "4 × H100 profile (2 × H200); single node",
+   "edit": "Rewrites the MLP module (activation, gating and hidden width) used in every transformer block, subject to a parameter cap.",
+   "verify": "Reruns 12,030-step 345M GPT pretraining on 4 GPUs after a 1.05x parameter-cap check; scores validation loss, perplexity and zero-shot lm-eval accuracy.",
+   "boundary": "No kernel fusion or throughput scoring; attention, data and optimizer are fixed.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-mlp",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-mlp/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-mlp/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-mlp/task.toml",
+   "mappings": [
+    {
+     "stage": "pretrain",
+     "layer": "methods",
+     "kind": "measured",
+     "relation": "Direct: feed-forward design scored through a real 345M pretraining run"
+    },
+    {
+     "stage": "pretrain",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Uses a fixed nanoGPT DDP training scaffold"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__llm-pretrain-mlp/tests/{meta/score_spec.py, eval/scripts/gpt_345m.sh, eval/scripts/lm_eval_345m.sh, meta/budget_check.py}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "llm-pretrain-normalization",
+   "benchmark": "mls",
+   "title": "Redesign normalization and block layout for pretraining",
+   "format": "Harbor",
+   "hardware": "4 × H100 profile (2 × H200); single node",
+   "edit": "Rewrites the normalization class and the transformer block composition, for example RMSNorm, pre- or post-norm placement, or parallel attention and MLP branches.",
+   "verify": "Reruns 12,030-step 345M GPT pretraining on 4 GPUs after a parameter-cap check; scores validation loss, perplexity and zero-shot lm-eval accuracy.",
+   "boundary": "Training stability is judged only through final metrics; no fused normalization kernels or speed measurement.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-normalization",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-normalization/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-normalization/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-normalization/task.toml",
+   "mappings": [
+    {
+     "stage": "pretrain",
+     "layer": "methods",
+     "kind": "measured",
+     "relation": "Direct: normalization and block layout scored through a real pretraining run"
+    },
+    {
+     "stage": "pretrain",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Uses a fixed nanoGPT DDP training scaffold"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__llm-pretrain-normalization/tests/{meta/score_spec.py, eval/scripts/gpt_345m.sh, eval/scripts/lm_eval_345m.sh, meta/budget_check.py}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "llm-pretrain-residual",
+   "benchmark": "mls",
+   "title": "Redesign the residual stream for GPT pretraining",
+   "format": "Harbor",
+   "hardware": "4 × H100 profile (2 × H200); single node",
+   "edit": "Rewrites block residual logic, the block loop in the model forward pass, extra residual parameters and their optimizer groups, for example scalar gates, embedding re-injection or attention over layers.",
+   "verify": "Reruns 13,535-step 345M GPT pretraining on 4 GPUs after a parameter-cap check; scores validation loss, perplexity and zero-shot lm-eval accuracy.",
+   "boundary": "Attention, MLP and data are fixed; memory and speed costs of multi-stream designs are not measured.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-residual",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-residual/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-residual/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-pretrain-residual/task.toml",
+   "mappings": [
+    {
+     "stage": "pretrain",
+     "layer": "methods",
+     "kind": "measured",
+     "relation": "Direct: residual design scored through a real 345M pretraining run"
+    },
+    {
+     "stage": "pretrain",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Uses a fixed nanoGPT DDP training scaffold"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__llm-pretrain-residual/tests/{meta/score_spec.py, eval/scripts/gpt_345m.sh, eval/scripts/lm_eval_345m.sh, meta/budget_check.py}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "llm-ptq-algorithm",
+   "benchmark": "mls",
+   "title": "Design post-training weight quantization for a 7B LLM",
+   "format": "Harbor",
+   "hardware": "3 × GPU; independent 1-GPU runs",
+   "edit": "Rewrites the per-layer quantizer: calibration statistics, scale and zero-point choice, error compensation or weight transforms, returning dequantized weights for each transformer linear layer.",
+   "verify": "Loads Mistral-7B, measures FP16 perplexity, quantizes all block linear layers layer by layer with 128 WikiText-2 calibration sequences, then scores perplexity and degradation at INT4, INT3 and INT4 with group 64.",
+   "boundary": "Weights remain FP16 after quantize-dequantize and bit-grid compliance is not checked; no low-bit kernels, latency or serving engine.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-ptq-algorithm",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-ptq-algorithm/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-ptq-algorithm/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-ptq-algorithm/task.toml",
+   "mappings": [
+    {
+     "stage": "serve",
+     "layer": "methods",
+     "kind": "measured",
+     "relation": "Direct: quantization algorithm applied to real Mistral-7B, perplexity measured"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "spot-checked",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__llm-ptq-algorithm/tests/{meta/score_spec.py, meta/pristine/gptq/custom_ptq.py, eval/scripts/ptq_eval_int4_g128.sh}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "llm-scaling-law-discovery",
+   "benchmark": "mls",
+   "title": "Fit scaling laws to recorded LM training runs",
+   "format": "Harbor",
+   "hardware": "CPU",
+   "edit": "Rewrites a scaling-law model with fit and predict methods that choose one symbolic form per benchmark family and fit per-group coefficients.",
+   "verify": "On CPU, fits the model to SLDBench vocabulary, learning-rate/batch-size and data-constrained training splits and joins predictions to verifier-held targets; scores R-squared, MAE, RMSE and normalized MAE.",
+   "boundary": "No language model is trained or evaluated; extrapolation is checked only against recorded runs.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-scaling-law-discovery",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-scaling-law-discovery/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-scaling-law-discovery/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__llm-scaling-law-discovery/task.toml",
+   "mappings": [
+    {
+     "stage": "pretrain",
+     "layer": "methods",
+     "kind": "adjacent",
+     "relation": "Laws fitted to recorded LM runs; no model is trained"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__llm-scaling-law-discovery/tests/{meta/score_spec.py, meta/dgp.py, meta/pristine/scaling-law-lab/custom_scaling_law.py}",
+   "census_confidence": "medium"
+  },
+  {
+   "id": "mas-topology",
+   "benchmark": "mls",
+   "title": "Design collaboration topologies for multi-agent LLM coding",
+   "format": "Harbor",
+   "hardware": "CPU + external LLM APIs",
+   "edit": "Rewrites the topology generator, which returns a directed acyclic graph over four agent nodes that review and refine each other's code.",
+   "verify": "Runs MacNet with DeepSeek-chat and Qwen2.5-72B APIs on a 33-problem HumanEval subset (pass@1 via unit tests) and 20 SRDD prompts (entry-point execution rate).",
+   "boundary": "No model training or serving; outcomes depend on external APIs and their nondeterminism; only four nodes are exercised.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__mas-topology",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__mas-topology/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__mas-topology/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__mas-topology/task.toml",
+   "mappings": [
+    {
+     "stage": "agentic",
+     "layer": "methods",
+     "kind": "adjacent",
+     "relation": "Fixed API models and MacNet runtime; agent edits only the topology"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "agent-reported",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__mas-topology/tests/{meta/score_spec.py, meta/parser.py, eval/scripts/run_humaneval_4_deepseek.sh, eval/scripts/run_srdd_4_deepseek.sh}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "mlsys-sparse-attention-inference",
+   "benchmark": "mls",
+   "title": "Design inference-time sparse attention for long contexts",
+   "format": "Harbor",
+   "hardware": "3 × GPU; independent 1-GPU runs",
+   "edit": "Rewrites the sparse attention module that replaces attention in every layer of Qwen2.5-1.5B-Instruct and must report the fraction of query-key pairs it attends to.",
+   "verify": "Runs 8K needle retrieval and LongBench Qasper and MultiFieldQA with the patched model; aborts if mean reported density exceeds 0.27; scores 70% quality and 30% density.",
+   "boundary": "Density is self-reported and wall-clock time is not scored; no KV cache, custom kernels or serving engine; the prefix is re-forwarded each step.",
+   "prerequisites": "Included in Full and the 30-task Lite subset. Public Docker recipe uses bohanlyu2022/mlsbench-harbor-nanogpt:latest; mutable image tags and GPU runs were not validated here.",
+   "taskUrl": "https://github.com/Imbernoulli/MLS-Bench/tree/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__mlsys-sparse-attention-inference",
+   "containerUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__mlsys-sparse-attention-inference/environment/Dockerfile",
+   "verifierUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__mlsys-sparse-attention-inference/tests/meta/score_spec.py",
+   "resourceUrl": "https://github.com/Imbernoulli/MLS-Bench/blob/4b1fd67364fd75afdb32622d42ee19c6155e021f/harbor/tasks/mls-bench__mlsys-sparse-attention-inference/task.toml",
+   "mappings": [
+    {
+     "stage": "serve",
+     "layer": "methods",
+     "kind": "measured",
+     "relation": "Direct: sparse attention in a real 1.5B model, quality measured"
+    },
+    {
+     "stage": "serve",
+     "layer": "engines",
+     "kind": "adjacent",
+     "relation": "Fixed generation harness; agent changes only the attention module"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "spot-checked",
+   "count": 1,
+   "census_evidence": "harbor/tasks/mls-bench__mlsys-sparse-attention-inference/tests/{meta/score_spec.py, meta/pristine/sparse-attn-eval/harness.py, meta/pristine/sparse-attn-eval/run_llm.py, eval/scripts/niah_8k.sh}",
+   "census_confidence": "high"
+  },
+  {
+   "id": "flashfftconv_multistream_gated_forward_speedup",
+   "benchmark": "rsi",
+   "title": "Speed up gated FFT long convolutions on a GPU",
+   "format": "Harbor",
+   "hardware": "1 CUDA GPU (H100 intended; identity not enforced)",
+   "edit": "Replaces a starter solver with a faster implementation of multi-stream gated causal FFT convolution in FP16, at 768 channels and 2,048 steps: the long-convolution operator of Hyena-style sequence models.",
+   "verify": "Hidden random cases are checked against a reference within tolerances, then timed with CUDA events after warmups against a production baseline measured on the same GPU; speedup maps to the reward.",
+   "boundary": "An isolated operator on random tensors: no model, training loop or serving path; the public release does not enforce the H100 identity.",
+   "prerequisites": "Public task and verifier Docker recipes; provision the specified accelerator and task assets. No container build or task execution was performed.",
+   "taskUrl": "https://huggingface.co/datasets/RSI-Exam/RSI-Exam/blob/23ab61b62b754250d2def0a0ee0df79dc8ba1e77/flashfftconv_multistream_gated_forward_speedup/instruction.md",
+   "containerUrl": "https://huggingface.co/datasets/RSI-Exam/RSI-Exam/blob/23ab61b62b754250d2def0a0ee0df79dc8ba1e77/flashfftconv_multistream_gated_forward_speedup/environment/Dockerfile",
+   "verifierUrl": "https://huggingface.co/datasets/RSI-Exam/RSI-Exam/blob/23ab61b62b754250d2def0a0ee0df79dc8ba1e77/flashfftconv_multistream_gated_forward_speedup/tests/grade.py",
+   "resourceUrl": "https://huggingface.co/datasets/RSI-Exam/RSI-Exam/blob/23ab61b62b754250d2def0a0ee0df79dc8ba1e77/flashfftconv_multistream_gated_forward_speedup/task.toml",
+   "mappings": [
+    {
+     "stage": "pretrain",
+     "layer": "kernels",
+     "kind": "measured",
+     "relation": "Shared primitive: isolated long-convolution kernel"
+    },
+    {
+     "stage": "posttrain",
+     "layer": "kernels",
+     "kind": "measured",
+     "relation": "Shared primitive: isolated long-convolution kernel"
+    },
+    {
+     "stage": "serve",
+     "layer": "kernels",
+     "kind": "measured",
+     "relation": "Shared primitive: isolated long-convolution kernel"
+    }
+   ],
+   "audit": "task-level",
+   "tag": "spot-checked",
+   "count": 1,
+   "census_evidence": "tests/grade.py; tests/child_eval.py; tests/protocol.py",
+   "census_confidence": "high"
   }
  ],
  "benchmarks": [
@@ -1715,8 +2417,8 @@
    "adoption": "Reported in Google's Gemini 3.8 Flash evaluation methodology and Anthropic's Fable 5.1 announcement (Sept 2026).",
    "public_tasks": 66,
    "screened_tasks": 66,
-   "lifecycle_tasks": 8,
-   "census_basis": "v1 audit screened all 66 task directories (5 Sep); 8 touch LLM infrastructure"
+   "lifecycle_tasks": 9,
+   "census_basis": "task census of 23 September 2026 (census/README.md)"
   },
   {
    "id": "tb21",
@@ -1735,8 +2437,8 @@
    "adoption": "Google Gemini 3.5 Flash model card (May 2026) and Anthropic's mid-2026 system cards report 2.1; labs have since moved to 4.0. Shares no tasks with 4.0.",
    "public_tasks": 89,
    "screened_tasks": 89,
-   "lifecycle_tasks": 8,
-   "census_basis": "all 89 task instructions screened at commit 7131e43; 8 touch LLM infrastructure"
+   "lifecycle_tasks": 9,
+   "census_basis": "task census of 23 September 2026 (census/README.md)"
   },
   {
    "id": "deepswe",
@@ -1756,7 +2458,7 @@
    "public_tasks": 113,
    "screened_tasks": 113,
    "lifecycle_tasks": 3,
-   "census_basis": "all 113 task titles screened (5 Sep); 3 touch LLM infrastructure"
+   "census_basis": "task census of 23 September 2026 (census/README.md)"
   },
   {
    "id": "mls",
@@ -1775,8 +2477,8 @@
    "adoption": "Kimi K3 evaluation footnotes name MLS-Bench-Lite.",
    "public_tasks": 140,
    "screened_tasks": 140,
-   "lifecycle_tasks": 140,
-   "census_basis": "benchmark scope: every task is an ML-systems task for LLM training or serving; 14 audited at task level"
+   "lifecycle_tasks": 28,
+   "census_basis": "task census of 23 September 2026 (census/README.md)"
   },
   {
    "id": "re",
@@ -1796,7 +2498,7 @@
    "public_tasks": 7,
    "screened_tasks": 7,
    "lifecycle_tasks": 7,
-   "census_basis": "all 7 environment families audited"
+   "census_basis": "task census of 23 September 2026 (census/README.md)"
   },
   {
    "id": "rsi",
@@ -1814,9 +2516,9 @@
    "selected": 8,
    "adoption": "Self-published leaderboard; frontier model-card adoption not established.",
    "public_tasks": 35,
-   "screened_tasks": 8,
-   "lifecycle_tasks": 8,
-   "census_basis": "8 of 35 public tasks audited and all touch the life cycle; the other 27 were not screened"
+   "screened_tasks": 35,
+   "lifecycle_tasks": 9,
+   "census_basis": "task census of 23 September 2026 (census/README.md)"
   },
   {
    "id": "ptb",
@@ -1836,7 +2538,7 @@
    "public_tasks": 28,
    "screened_tasks": 28,
    "lifecycle_tasks": 28,
-   "census_basis": "every task post-trains a base model"
+   "census_basis": "task census of 23 September 2026 (census/README.md)"
   },
   {
    "id": "infbench",
@@ -1856,7 +2558,7 @@
    "public_tasks": 4,
    "screened_tasks": 4,
    "lifecycle_tasks": 4,
-   "census_basis": "every scenario stands up an inference server"
+   "census_basis": "task census of 23 September 2026 (census/README.md)"
   },
   {
    "id": "weirdml",
@@ -1873,10 +2575,10 @@
    "tag": "spot-checked",
    "selected": 1,
    "adoption": "Epoch AI runs v2 in its Benchmarking Hub and includes WeirdML in the Epoch Capabilities Index. No frontier model card found citing it.",
-   "public_tasks": 11,
-   "screened_tasks": 11,
+   "public_tasks": 4,
+   "screened_tasks": 4,
    "lifecycle_tasks": 0,
-   "census_basis": "task page (16 Sep): non-LLM machine-learning tasks only"
+   "census_basis": "task census of 23 September 2026 (census/README.md)"
   },
   {
    "id": "edgebench",
@@ -1896,7 +2598,7 @@
    "public_tasks": 51,
    "screened_tasks": 51,
    "lifecycle_tasks": 0,
-   "census_basis": "README task table: no task targets LLM training, serving, kernels or checkpoints"
+   "census_basis": "task census of 23 September 2026 (census/README.md)"
   },
   {
    "id": "isobench",
@@ -4852,5 +5554,127 @@
    }
   ]
  },
- "census": null
+ "census": {
+  "snapshot": "2026-09-23",
+  "rule": "A task counts as touching the LLM life cycle (L) when the work its verifier checks is part of how language models are built, trained, post-trained, evaluated, served or run as agents; public tasks only, read at the pinned commit (instruction, manifest and, for every L task, the verifier).",
+  "benchmarks": {
+   "tb4": {
+    "public": 66,
+    "advertised": 66,
+    "screened": 66,
+    "L": 9,
+    "A": 9,
+    "O": 48,
+    "unscreened": 0,
+    "method": "Every public task read at the pinned commit: instruction and manifest for all, verifier for every L task and every mapped A task.",
+    "tag": "agent-reported"
+   },
+   "tb21": {
+    "public": 89,
+    "advertised": 89,
+    "screened": 89,
+    "L": 9,
+    "A": 12,
+    "O": 68,
+    "unscreened": 0,
+    "method": "Every public task read at the pinned commit: instruction and manifest for all, verifier for every L task and every mapped A task.",
+    "tag": "agent-reported"
+   },
+   "deepswe": {
+    "public": 113,
+    "advertised": 113,
+    "screened": 113,
+    "L": 3,
+    "A": 15,
+    "O": 95,
+    "unscreened": 0,
+    "method": "Every public task read at the pinned commit: instruction and manifest for all, verifier for every L task and every mapped A task.",
+    "tag": "agent-reported"
+   },
+   "mls": {
+    "public": 140,
+    "advertised": 140,
+    "screened": 140,
+    "L": 28,
+    "A": 109,
+    "O": 3,
+    "unscreened": 0,
+    "method": "Every public task read at the pinned commit: instruction and manifest for all, verifier for every L task and every mapped A task.",
+    "tag": "agent-reported"
+   },
+   "re": {
+    "public": 7,
+    "advertised": 7,
+    "screened": 7,
+    "L": 7,
+    "A": 0,
+    "O": 0,
+    "unscreened": 0,
+    "method": "All seven environment families read at the pinned commit in the first audit (5 Sept); verdicts re-applied under the census rule.",
+    "tag": "spot-checked"
+   },
+   "rsi": {
+    "public": 35,
+    "advertised": 88,
+    "screened": 35,
+    "L": 9,
+    "A": 9,
+    "O": 17,
+    "unscreened": 0,
+    "method": "Every public task read at the pinned commit: instruction and manifest for all, verifier for every L task and every mapped A task.",
+    "tag": "agent-reported"
+   },
+   "ptb": {
+    "public": 28,
+    "advertised": 28,
+    "screened": 28,
+    "L": 28,
+    "A": 0,
+    "O": 0,
+    "unscreened": 0,
+    "method": "Family: 28 tasks = 4 base models × 7 target benchmarks with one shared task format; the format was read, not each instance.",
+    "tag": "prior-note"
+   },
+   "infbench": {
+    "public": 4,
+    "advertised": 4,
+    "screened": 4,
+    "L": 4,
+    "A": 0,
+    "O": 0,
+    "unscreened": 0,
+    "method": "Family: four serving scenarios on one shared task format; the format was read, not each instance.",
+    "tag": "prior-note"
+   },
+   "weirdml": {
+    "public": 4,
+    "advertised": 11,
+    "screened": 4,
+    "L": 0,
+    "A": 3,
+    "O": 1,
+    "unscreened": 7,
+    "method": "Eleven task names are listed in the results data; only four are described publicly (task page of 16 Sept 2026). The other seven cannot be screened.",
+    "tag": "spot-checked"
+   },
+   "edgebench": {
+    "public": 51,
+    "advertised": 134,
+    "screened": 51,
+    "L": 0,
+    "A": 4,
+    "O": 47,
+    "unscreened": 0,
+    "method": "The 51 public tasks screened from the README task table (name and category) and the task descriptions read on 21–22 Sept; 83 tasks are held out.",
+    "tag": "spot-checked"
+   }
+  },
+  "totals": {
+   "screened": 537,
+   "L": 97,
+   "A": 161,
+   "O": 279,
+   "public": 537
+  }
+ }
 }
