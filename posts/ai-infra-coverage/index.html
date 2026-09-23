@@ -190,8 +190,8 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 
 svg .scorerow{cursor:pointer} svg .scorerow:hover text, svg .scorerow:focus text{fill:var(--accent)} svg .scorerow:focus{outline:none}
 
-.legend .sq{display:inline-block; width:11px; height:11px; border-radius:2px; flex:none} .legend .sq.ev3{background:var(--ev3)} .legend .sq.ev1{background:var(--ev1)} .legend .sq.ev0{background:var(--ev0); border:1px solid var(--line-2)} .legend .sq.bar{background:var(--ev3); opacity:.34; width:22px}
-svg .cellmark{cursor:default} svg .cellmark:hover, svg .cellmark:focus{stroke:var(--ink); stroke-width:1.5; outline:none}
+.legend .sq{display:inline-block; width:7px; height:7px; border-radius:1.5px; flex:none} .legend .sq.ev3{background:var(--ev3)} .legend .sq.ev2{background:var(--ev2)} .legend .sq.none{background:var(--ink); opacity:.1; width:8px; height:8px} .legend .sq.barw{width:22px; height:14px; border-radius:3px; margin-right:-3px} .legend .sq.barw.ev3{opacity:.55} .legend .sq.barw.ev2{opacity:.45} .legend .k.mut{color:var(--muted); font-family:var(--mono); font-size:11.5px}
+svg .cellmark{cursor:default; stroke:var(--surface); stroke-width:.8} svg .cellmark.none{fill:var(--ink); opacity:.09; stroke:none} svg .cellmark:hover, svg .cellmark:focus{stroke:var(--ink); stroke-width:1.5; outline:none; opacity:1}
 .legend .k[hidden]{display:none}
 
 </style>
@@ -234,7 +234,7 @@ svg .cellmark{cursor:default} svg .cellmark:hover, svg .cellmark:focus{stroke:va
   <p>Ten public benchmarks and 52 audited task entries, placed on the surface production pipelines run: five life-cycle stages by seven infrastructure layers, 35 cells in all. The bars count how much of that surface each benchmark's verifiers actually execute; hover a bar for its cells.</p>
   <figure id="fig-score" aria-label="Per-benchmark coverage of the stage by layer surface">
     <div class="fig-title"><strong id="score-title"></strong><span>hover a mark for the cell · select a name for the benchmark</span></div>
-    <div class="legend"><span class="k" id="score-legend-tasks" hidden><i class="dot" style="background:var(--ink-2)"></i> public tasks that touch the life cycle</span><span class="k"><i class="sq ev3"></i> real LLM workload executed</span><span class="k"><i class="sq ev1"></i> unit tests, simulations or related evidence only</span><span class="k"><i class="sq ev0"></i> untouched cell</span><span class="k"><i class="sq bar"></i> translucent bar = count of dark cells</span></div>
+    <div class="legend"><span class="k" id="score-legend-tasks" hidden><i class="dot" style="background:var(--ink-2)"></i> public tasks that touch the life cycle</span><span class="k"><i class="sq barw ev3"></i><i class="sq ev3"></i> real LLM workload executed</span><span class="k"><i class="sq barw ev2"></i><i class="sq ev2"></i> unit tests, simulations or related evidence only</span><span class="k"><i class="sq none"></i> untouched cell</span><span class="k mut">bars count the cells · marks show which cells</span></div>
     <div class="scroll"><div id="score-svg"></div></div>
     <figcaption id="score-cap"></figcaption>
   </figure>
@@ -441,7 +441,7 @@ function renderScore(){
   const rows=prim.map(scoreRow).sort((a,b)=>(b.meas-a.meas)||(b.any-a.any)||(share(b.cen)-share(a.cen))||a.b.short.localeCompare(b.b.short));
   const union=scoreRow(null); const hasCen=!!CEN;
   const TX0=L+8, TW=hasCen?132:0, TX1=TX0+TW;
-  const X0=hasCen?TX1+86:L+8, X1=W-124, NS=STAGES.length, NL=LAYERS.length, GAP=hasCen?8:12, SLOT=(X1-X0-GAP*(NS-1))/NCELL, MK=Math.min(12, SLOT-5), RH=34, BH=22, TOP=52;
+  const X0=hasCen?TX1+86:L+8, X1=W-124, NS=STAGES.length, NL=LAYERS.length, GAP=hasCen?8:12, SLOT=(X1-X0-GAP*(NS-1))/NCELL, MK=Math.min(7, SLOT-6), RH=40, BH=28, TOP=52;
   const sx=(si,li)=>X0+si*(NL*SLOT+GAP)+li*SLOT, xEnd=k=>k<=0?X0:sx(Math.floor((k-1)/NL),(k-1)%NL)+SLOT;
   const H=TOP+rows.length*RH+10; let y=TOP; let s='';
   s+=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Per benchmark: share of public tasks that touch an LLM's life cycle, and distinct cells of the ${NCELL}-cell stage by layer surface reached at runtime or with any evidence">`;
@@ -455,9 +455,9 @@ function renderScore(){
     s+=`<g class="scorerow" data-bm="${r.b?esc(r.b.id):'all'}">`;
     s+=`<g tabindex="0" role="button" data-tt="score" data-bm="${r.b?esc(r.b.id):'all'}" aria-label="${esc(name)}: ${r.cen?r.cen.L+' of '+r.cen.screened+' public tasks touch the life cycle; ':''}${r.meas} of ${NCELL} cells measured, ${r.any} with any evidence"><rect x="0" y="${y}" width="${L}" height="${RH}" fill="transparent"/><text x="${L-12}" y="${ym-1}" text-anchor="end" class="md" style="font-weight:${bold?600:500}">${esc(name)}</text><text x="${L-12}" y="${ym+12}" text-anchor="end" class="sm mono mut">${esc(sub)}</text></g>`;
     if(hasCen && r.cen){ const w=TW*share(r.cen); s+=`<rect x="${TX0}" y="${ym-BH/2}" width="${TW}" height="${BH}" rx="2" class="ev0"/>`; if(w>0) s+=`<rect x="${TX0}" y="${ym-BH/2}" width="${Math.max(2,w)}" height="${BH}" rx="2" style="fill:var(--ink-2)"/>`; s+=`<text x="${TX1+8}" y="${ym+4}" class="md mono" style="font-weight:${bold?600:500};${r.cen.L?'':'fill:var(--muted)'}">${r.cen.L}/${r.cen.screened}</text>`; }
-    if(r.any>0) s+=`<rect x="${X0}" y="${ym-BH/2}" width="${xEnd(r.any)-X0}" height="${BH}" rx="3" class="ev1" opacity=".38"/>`;
-    if(r.meas>0) s+=`<rect x="${X0}" y="${ym-BH/2}" width="${xEnd(r.meas)-X0}" height="${BH}" rx="3" class="ev3" opacity=".34"/>`;
-    STAGES.forEach((st,si)=>{ LAYERS.forEach((ly,li)=>{ const kind=r.cells.get(st.id+'|'+ly.id); const x=sx(si,li)+(SLOT-MK)/2; const cls=kind==='measured'?'ev3':kind?'ev1':'ev0'; s+=`<rect x="${x}" y="${ym-MK/2}" width="${MK}" height="${MK}" rx="2" class="${cls} cellmark" ${kind?'':'opacity=".75"'} tabindex="0" role="img" data-tt="cell" data-bm="${r.b?esc(r.b.id):'all'}" data-stage="${st.id}" data-layer="${ly.id}" aria-label="${esc(name)}, ${esc(st.name)} / ${esc(ly.name)}: ${kind?KIND[kind].label:'no task'}"/>`; }); });
+    if(r.any>0) s+=`<rect x="${X0}" y="${ym-BH/2}" width="${xEnd(r.any)-X0}" height="${BH}" rx="4" class="ev2" opacity=".45"/>`;
+    if(r.meas>0) s+=`<rect x="${X0}" y="${ym-BH/2}" width="${xEnd(r.meas)-X0}" height="${BH}" rx="4" class="ev3" opacity=".55"/>`;
+    STAGES.forEach((st,si)=>{ LAYERS.forEach((ly,li)=>{ const kind=r.cells.get(st.id+'|'+ly.id); const x=sx(si,li)+(SLOT-MK)/2; const cls=kind==='measured'?'ev3 cellmark':kind?'ev2 cellmark':'cellmark none'; s+=`<rect x="${x}" y="${ym-MK/2}" width="${MK}" height="${MK}" rx="1.5" class="${cls}" tabindex="0" role="img" data-tt="cell" data-bm="${r.b?esc(r.b.id):'all'}" data-stage="${st.id}" data-layer="${ly.id}" aria-label="${esc(name)}, ${esc(st.name)} / ${esc(ly.name)}: ${kind?KIND[kind].label:'no task'}"/>`; }); });
     s+=`<text x="${X1+10}" y="${ym+4}" class="md mono" style="font-weight:${bold?600:500};${r.meas?'':'fill:var(--muted)'}">${r.meas} · ${r.pct}%</text></g>`; }
   for(const r of rows){ bar(r, y, false); y+=RH; }
   s+='</svg>'; $('#score-svg').innerHTML=s;
@@ -469,7 +469,7 @@ function renderScore(){
     const lg=$('#score-legend-tasks'); if(lg) lg.hidden=false;
   } else {
     $('#score-title').textContent=`No benchmark executes the real workload in more than ${best.pct}% of the surface; all ten together reach ${union.pct}%`;
-    $('#score-cap').textContent=`Each mark is one of the ${NCELL} stage × layer cells, grouped by stage; within a stage the seven marks run methods · data & evaluation · engines · distributed · state · kernels · cluster. A dark mark means at least one of the benchmark's verifiers executes the real LLM workload there (a training run, a finetune or a kernel on the declared hardware); a light mark means only unit tests, simulations or related evidence; the translucent bar and the number count the dark marks. WeirdML and EdgeBench run real GPU workloads, but not LLM ones, so they score zero on this surface.`;
+    $('#score-cap').textContent=`Each mark is one of the ${NCELL} stage × layer cells, grouped by stage; within a stage the seven marks run methods · data & evaluation · engines · distributed · state · kernels · cluster. A dark mark means at least one of the benchmark's verifiers executes the real LLM workload there (a training run, a finetune or a kernel on the declared hardware); a lighter mark means only unit tests, simulations or related evidence; the bar behind them and the number count those cells, dark for the real workload and lighter for any evidence. WeirdML and EdgeBench run real GPU workloads, but not LLM ones, so they score zero on this surface.`;
     const la=$('#lede-answer'); if(la) la.textContent=`Together, the ten benchmarks execute the real workload in ${union.meas} of the ${NCELL} cells of that axis.`;
   }
 }
