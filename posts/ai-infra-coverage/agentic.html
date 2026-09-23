@@ -190,14 +190,14 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 
 svg .scorerow{cursor:pointer} svg .scorerow:hover text, svg .scorerow:focus text{fill:var(--accent)} svg .scorerow:focus{outline:none}
 
-.legend .sq{display:inline-block; width:7px; height:7px; border-radius:1.5px; flex:none} .legend .sq.ev3{background:var(--ev3)} .legend .sq.ev2{background:var(--ev2)} .legend .sq.none{background:var(--ink); opacity:.1; width:8px; height:8px} .legend .sq.barw{width:22px; height:14px; border-radius:3px; margin-right:-3px} .legend .sq.barw.ev3{opacity:.55} .legend .sq.barw.ev2{opacity:.45} .legend .k.mut{color:var(--muted); font-family:var(--mono); font-size:11.5px}
-svg .cellmark{cursor:default; stroke:var(--surface); stroke-width:.8} svg .cellmark.none{fill:var(--ink); opacity:.09; stroke:none} svg .cellmark:hover, svg .cellmark:focus{stroke:var(--ink); stroke-width:1.5; outline:none; opacity:1}
+.legend .sq{display:inline-block; width:6px; height:6px; border-radius:1.5px; flex:none} .legend .sq.ev3{background:var(--ev3)} .legend .sq.ev2{background:var(--ev2)} .legend .sq.ev1{background:var(--ev1)} .legend .sq.none{background:var(--ink); opacity:.1; width:7px; height:7px} .legend .sq.barw{width:22px; height:14px; border-radius:3px; margin-right:-3px} .legend .sq.barw.ev3{opacity:.8} .legend .sq.barw.ev2{opacity:.55} .legend .k.mut{color:var(--muted); font-family:var(--mono); font-size:11.5px}
+svg .cellmark{cursor:default; stroke:var(--surface); stroke-width:.6} svg .cellmark.none{fill:var(--ink); opacity:.09; stroke:none} svg .cellmark:hover, svg .cellmark:focus{stroke:var(--ink); stroke-width:1.5; outline:none; opacity:1}
 .legend .k[hidden]{display:none}
 
 </style>
 <header class="top">
   <a href="/blog.html" style="font:12px var(--mono);color:var(--muted);white-space:nowrap">← blog</a>
-  <span class="brand"><a href="index.html" style="color:inherit">AI-Infra Environment Coverage</a> <span>/ agentic RL</span></span>
+  <span class="brand"><a href="index.html" style="color:inherit">How to benchmark RSI</a> <span>/ agentic RL</span></span>
   <nav aria-label="Sections">
     <a href="#fleets">Fleets</a>
     <a href="#staleness">Staleness</a>
@@ -308,7 +308,7 @@ function bindTips(root, resolver){
 function svgHeader(y){ let s=''; STAGES.forEach((st,i)=>{ s+=`<text x="${cx(i)}" y="${y}" text-anchor="middle" class="lg">${esc(st.name)}<\/text><text x="${cx(i)}" y="${y+14}" text-anchor="middle" class="sm mono mut">${esc(st.short||st.sub)}<\/text>`; }); return s; }
 function colLines(y0,y1){ let s=''; for(let i=0;i<=STAGES.length;i++){ const x=L+COLW*i; s+=`<line x1="${x}" y1="${y0}" x2="${x}" y2="${y1}" class="hair"/>`; } return s; }
 function initTheme(btn){ const modes=['system','light','dark']; let cur='system'; try{ cur=localStorage.getItem('aiec-theme')||'system'; }catch(e){} function apply(){ if(cur==='system') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme=cur; if(btn) btn.textContent='theme: '+cur; try{ localStorage.setItem('aiec-theme',cur);}catch(e){} } if(btn) btn.addEventListener('click',()=>{ cur=modes[(modes.indexOf(cur)+1)%3]; apply(); }); apply(); }
-function renderFooter(el, extra){ el.replaceChildren(h('span',{text:'AI-Infra-Environment coverage audit · v2.4'}),h('span',{text:'built '+A.meta.built+' · task snapshots '+A.meta.snapshot_v1+' / '+A.meta.snapshot_v2}),h('a',{href:'index.html',text:'overview'}),h('a',{href:'loop.html',text:'RL loop'}),h('a',{href:'posttrain.html',text:'post-training recipes'}),h('a',{href:'agentic.html',text:'agentic RL infrastructure'}),h('a',{href:'data/audit_bundle.json',text:'data bundle (JSON)'}),h('a',{href:'notes/',text:'companion notes'}), ...(extra||[])); }
+function renderFooter(el, extra){ el.replaceChildren(h('span',{text:'AI-Infra-Environment coverage audit · v2.5'}),h('span',{text:'built '+A.meta.built+' · task snapshots '+A.meta.snapshot_v1+' / '+A.meta.snapshot_v2}),h('a',{href:'index.html',text:'overview'}),h('a',{href:'loop.html',text:'RL loop'}),h('a',{href:'posttrain.html',text:'post-training recipes'}),h('a',{href:'agentic.html',text:'agentic RL infrastructure'}),h('a',{href:'data/audit_bundle.json',text:'data bundle (JSON)'}),h('a',{href:'notes/',text:'companion notes'}), ...(extra||[])); }
 // RL loop
 function nodeTasks(c){ return (c.tasks||[]).map(x=>({t:TASK[x.id], kind:x.kind, why:x.why})).filter(x=>x.t); }
 function renderLoop(opts){

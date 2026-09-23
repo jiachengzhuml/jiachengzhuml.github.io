@@ -1,4 +1,4 @@
-<title>AI-Infra Environment Coverage</title>
+<title>How to benchmark RSI</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -190,14 +190,14 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 
 svg .scorerow{cursor:pointer} svg .scorerow:hover text, svg .scorerow:focus text{fill:var(--accent)} svg .scorerow:focus{outline:none}
 
-.legend .sq{display:inline-block; width:7px; height:7px; border-radius:1.5px; flex:none} .legend .sq.ev3{background:var(--ev3)} .legend .sq.ev2{background:var(--ev2)} .legend .sq.none{background:var(--ink); opacity:.1; width:8px; height:8px} .legend .sq.barw{width:22px; height:14px; border-radius:3px; margin-right:-3px} .legend .sq.barw.ev3{opacity:.55} .legend .sq.barw.ev2{opacity:.45} .legend .k.mut{color:var(--muted); font-family:var(--mono); font-size:11.5px}
-svg .cellmark{cursor:default; stroke:var(--surface); stroke-width:.8} svg .cellmark.none{fill:var(--ink); opacity:.09; stroke:none} svg .cellmark:hover, svg .cellmark:focus{stroke:var(--ink); stroke-width:1.5; outline:none; opacity:1}
+.legend .sq{display:inline-block; width:6px; height:6px; border-radius:1.5px; flex:none} .legend .sq.ev3{background:var(--ev3)} .legend .sq.ev2{background:var(--ev2)} .legend .sq.ev1{background:var(--ev1)} .legend .sq.none{background:var(--ink); opacity:.1; width:7px; height:7px} .legend .sq.barw{width:22px; height:14px; border-radius:3px; margin-right:-3px} .legend .sq.barw.ev3{opacity:.8} .legend .sq.barw.ev2{opacity:.55} .legend .k.mut{color:var(--muted); font-family:var(--mono); font-size:11.5px}
+svg .cellmark{cursor:default; stroke:var(--surface); stroke-width:.6} svg .cellmark.none{fill:var(--ink); opacity:.09; stroke:none} svg .cellmark:hover, svg .cellmark:focus{stroke:var(--ink); stroke-width:1.5; outline:none; opacity:1}
 .legend .k[hidden]{display:none}
 
 </style>
 <header class="top">
   <a href="/blog.html" style="font:12px var(--mono);color:var(--muted);white-space:nowrap">← blog</a>
-  <span class="brand">AI-Infra Environment Coverage</span>
+  <span class="brand">How to benchmark RSI</span>
   <nav aria-label="Sections">
     <a href="#coverage">Coverage</a>
     <a href="#lifecycle">Life cycles</a>
@@ -214,10 +214,11 @@ svg .cellmark{cursor:default; stroke:var(--surface); stroke-width:.8} svg .cellm
 
 <main>
 <section class="intro" id="intro">
-  <p class="eyebrow">Coverage audit · version 2.4 · source snapshots 5, 21, 22 and 23 September 2026</p>
-  <h1>AI-Infra Environment Coverage</h1>
-  <p class="subtitle">Which parts of an LLM's life cycle do public benchmarks actually test?</p>
-  <p class="lede">Every stage of a production LLM's life is run by real systems with public code or a published account. This review draws those life cycles from primary sources and places every audited benchmark task on the same axis. <span id="lede-answer"></span></p>
+  <p class="eyebrow">Coverage audit · version 2.5 · source snapshots 5, 21, 22 and 23 September 2026</p>
+  <h1>How to benchmark RSI</h1>
+  <p class="subtitle">How much of realistic LLM training do today's benchmark environments cover?</p>
+  <p class="lede">Recursive self-improvement (RSI), AI systems building their own successors, matters enough that frontier labs now publish <a href="https://www.anthropic.com/institute/measuring-pace-of-ai-development" target="_blank" rel="noreferrer">measurements of how much of their model R&amp;D is done by AI</a>. Yet what counts as RSI will be argued over for a long time, and how to measure it is an open problem: the first RSI benchmarks are only now being assembled (<a href="https://labs.scale.com/rsi-benchmark/contribute" target="_blank" rel="noreferrer">Scale RSI Bench</a>, <a href="https://rsi-exam.ai/blog.html" target="_blank" rel="noreferrer">RSI-Exam</a>). Whatever the definition settles on, one capability sits at its core: training an AI model end to end, on real infrastructure. Meanwhile, coding-agent benchmarks such as <a href="https://arxiv.org/abs/2509.16941" target="_blank" rel="noreferrer">SWE-Bench Pro</a>, the <a href="https://www.tbench.ai/" target="_blank" rel="noreferrer">Terminal-Bench</a> series, <a href="https://deepswe.datacurve.ai/blog/deepswe" target="_blank" rel="noreferrer">DeepSWE</a> and <a href="https://arxiv.org/abs/2605.03546" target="_blank" rel="noreferrer">ProgramBench</a> have become the standard yardstick of frontier-model progress, and their environments double as training grounds for the next models. Whether they exercise the capability RSI actually needs has not been checked.</p>
+  <p class="lede">This post audits <a href="#coverage">ten public benchmark suites</a> (52 task entries, 142 task instances) against the life cycle of production LLMs, drawn from <a href="#lifecycle">eighteen documented pipelines</a>. We find that (1) only a small fraction of general coding tasks touch LLM infrastructure at all: 8 of 89 in <a href="https://www.tbench.ai/news/terminal-bench-2-1" target="_blank" rel="noreferrer">Terminal-Bench 2.1</a> and 3 of 113 in DeepSWE; (2) taken together, the ten suites execute a real LLM workload in 12 of the 35 stage × layer cells of that life cycle, and no single suite does so in more than 10; (3) two stages, data and agentic RL, and two layers, data &amp; evaluation and cluster &amp; isolation, have no task that runs the real system; and (4) every environment fits on one node of at most eight GPUs, while the smallest documented production pretraining run in our sources uses <a href="https://huggingface.co/blog/smollm3" target="_blank" rel="noreferrer">384</a>.</p>
   <div class="facts" id="facts"></div>
   <div class="key" aria-label="Reading key">
     <span class="k"><i class="dot ev3"></i> measured runtime</span>
@@ -231,10 +232,10 @@ svg .cellmark{cursor:default; stroke:var(--surface); stroke-width:.8} svg .cellm
 <section class="block" id="coverage">
   <span class="section-no">01</span>
   <h2>Where public benchmark environments land</h2>
-  <p>Ten public benchmarks and 52 audited task entries, placed on the surface production pipelines run: five life-cycle stages by seven infrastructure layers, 35 cells in all. The bars count how much of that surface each benchmark's verifiers actually execute; hover a bar for its cells.</p>
+  <p>Ten public benchmarks and 52 audited task entries, placed on the surface production pipelines run: five life-cycle stages by seven infrastructure layers, 35 cells in all. The bars score how much of that surface each benchmark's verifiers reach, weighted by how deeply; hover a mark for its cell.</p>
   <figure id="fig-score" aria-label="Per-benchmark coverage of the stage by layer surface">
     <div class="fig-title"><strong id="score-title"></strong><span>hover a mark for the cell · select a name for the benchmark</span></div>
-    <div class="legend"><span class="k" id="score-legend-tasks" hidden><i class="dot" style="background:var(--ink-2)"></i> public tasks that touch the life cycle</span><span class="k"><i class="sq barw ev3"></i><i class="sq ev3"></i> real LLM workload executed</span><span class="k"><i class="sq barw ev2"></i><i class="sq ev2"></i> unit tests, simulations or related evidence only</span><span class="k"><i class="sq none"></i> untouched cell</span><span class="k mut">bars count the cells · marks show which cells</span></div>
+    <div class="legend"><span class="k" id="score-legend-tasks" hidden><i class="dot" style="background:var(--ink-2)"></i> public tasks that touch the life cycle</span><span class="k"><i class="sq barw ev3"></i><i class="sq ev3"></i> real LLM workload executed · 1</span><span class="k"><i class="sq barw ev2"></i><i class="sq ev2"></i> bounded unit or artifact tests · ½</span><span class="k"><i class="sq ev1"></i> related or simulated · ¼</span><span class="k"><i class="sq none"></i> untouched</span><span class="k mut">bar = weighted score · marks = which cells</span></div>
     <div class="scroll"><div id="score-svg"></div></div>
     <figcaption id="score-cap"></figcaption>
   </figure>
@@ -347,7 +348,7 @@ function bindTips(root, resolver){
 function svgHeader(y){ let s=''; STAGES.forEach((st,i)=>{ s+=`<text x="${cx(i)}" y="${y}" text-anchor="middle" class="lg">${esc(st.name)}<\/text><text x="${cx(i)}" y="${y+14}" text-anchor="middle" class="sm mono mut">${esc(st.short||st.sub)}<\/text>`; }); return s; }
 function colLines(y0,y1){ let s=''; for(let i=0;i<=STAGES.length;i++){ const x=L+COLW*i; s+=`<line x1="${x}" y1="${y0}" x2="${x}" y2="${y1}" class="hair"/>`; } return s; }
 function initTheme(btn){ const modes=['system','light','dark']; let cur='system'; try{ cur=localStorage.getItem('aiec-theme')||'system'; }catch(e){} function apply(){ if(cur==='system') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme=cur; if(btn) btn.textContent='theme: '+cur; try{ localStorage.setItem('aiec-theme',cur);}catch(e){} } if(btn) btn.addEventListener('click',()=>{ cur=modes[(modes.indexOf(cur)+1)%3]; apply(); }); apply(); }
-function renderFooter(el, extra){ el.replaceChildren(h('span',{text:'AI-Infra-Environment coverage audit · v2.4'}),h('span',{text:'built '+A.meta.built+' · task snapshots '+A.meta.snapshot_v1+' / '+A.meta.snapshot_v2}),h('a',{href:'index.html',text:'overview'}),h('a',{href:'loop.html',text:'RL loop'}),h('a',{href:'posttrain.html',text:'post-training recipes'}),h('a',{href:'agentic.html',text:'agentic RL infrastructure'}),h('a',{href:'data/audit_bundle.json',text:'data bundle (JSON)'}),h('a',{href:'notes/',text:'companion notes'}), ...(extra||[])); }
+function renderFooter(el, extra){ el.replaceChildren(h('span',{text:'AI-Infra-Environment coverage audit · v2.5'}),h('span',{text:'built '+A.meta.built+' · task snapshots '+A.meta.snapshot_v1+' / '+A.meta.snapshot_v2}),h('a',{href:'index.html',text:'overview'}),h('a',{href:'loop.html',text:'RL loop'}),h('a',{href:'posttrain.html',text:'post-training recipes'}),h('a',{href:'agentic.html',text:'agentic RL infrastructure'}),h('a',{href:'data/audit_bundle.json',text:'data bundle (JSON)'}),h('a',{href:'notes/',text:'companion notes'}), ...(extra||[])); }
 // RL loop
 function nodeTasks(c){ return (c.tasks||[]).map(x=>({t:TASK[x.id], kind:x.kind, why:x.why})).filter(x=>x.t); }
 function renderLoop(opts){
@@ -433,21 +434,22 @@ function openCode(c, st, btn){ document.querySelectorAll('.chipbtn.sel').forEach
 const NCELL=STAGES.length*LAYERS.length;
 const CEN=A.census||null;
 function bmCells(bmId){ const c=new Map(); for(const t of A.tasks){ if(bmId && t.benchmark!==bmId) continue; const b=BM[t.benchmark]; if(!b || b.group!=='primary') continue; for(const m of t.mappings){ const k=m.stage+'|'+m.layer; const prev=c.get(k); if(!prev || KIND[m.kind].rank>KIND[prev].rank) c.set(k,m.kind); } } return c; }
-function scoreRow(b){ const c=bmCells(b?b.id:null); let meas=0; for(const k of c.values()) if(k==='measured') meas++; const cen=CEN?(b?CEN.benchmarks[b.id]:CEN.totals):null; return {b, cells:c, meas, any:c.size, pct:Math.round(100*meas/NCELL), cen}; }
+const WT={measured:1,bounded:.5,adjacent:.25};
+function scoreRow(b){ const c=bmCells(b?b.id:null); let meas=0, wtd=0; for(const k of c.values()){ if(k==='measured') meas++; wtd+=WT[k]||0; } const cen=CEN?(b?CEN.benchmarks[b.id]:CEN.totals):null; return {b, cells:c, meas, any:c.size, wtd, pct:Math.round(100*wtd/NCELL), mpct:Math.round(100*meas/NCELL), cen}; }
 function cellName(k){ const [s,l]=k.split('|'); return `${STAGES[SIDX[s]].name} / ${LAYERS.find(x=>x.id===l).name}`; }
 function share(cen){ return cen&&cen.screened ? cen.L/cen.screened : 0; }
 function renderScore(){
   const prim=A.benchmarks.filter(b=>b.group==='primary');
-  const rows=prim.map(scoreRow).sort((a,b)=>(b.meas-a.meas)||(b.any-a.any)||(share(b.cen)-share(a.cen))||a.b.short.localeCompare(b.b.short));
+  const rows=prim.map(scoreRow).sort((a,b)=>(b.wtd-a.wtd)||(b.meas-a.meas)||(b.any-a.any)||(share(b.cen)-share(a.cen))||a.b.short.localeCompare(b.b.short));
   const union=scoreRow(null); const hasCen=!!CEN;
   const TX0=L+8, TW=hasCen?132:0, TX1=TX0+TW;
-  const X0=hasCen?TX1+86:L+8, X1=W-124, NS=STAGES.length, NL=LAYERS.length, GAP=hasCen?8:12, SLOT=(X1-X0-GAP*(NS-1))/NCELL, MK=Math.min(7, SLOT-6), RH=40, BH=28, TOP=52;
-  const sx=(si,li)=>X0+si*(NL*SLOT+GAP)+li*SLOT, xEnd=k=>k<=0?X0:sx(Math.floor((k-1)/NL),(k-1)%NL)+SLOT;
+  const X0=hasCen?TX1+86:L+8, X1=W-124, NS=STAGES.length, NL=LAYERS.length, GAP=hasCen?8:12, SLOT=(X1-X0-GAP*(NS-1))/NCELL, MK=Math.min(5, SLOT-6), RH=40, BH=28, TOP=52;
+  const sx=(si,li)=>X0+si*(NL*SLOT+GAP)+li*SLOT, xs=v=>X0+(v/NCELL)*(X1-X0);
   const H=TOP+rows.length*RH+10; let y=TOP; let s='';
   s+=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Per benchmark: share of public tasks that touch an LLM's life cycle, and distinct cells of the ${NCELL}-cell stage by layer surface reached at runtime or with any evidence">`;
   if(hasCen){ s+=`<text x="${TX0}" y="${TOP-30}" class="sm mono mut">public tasks touching the life cycle</text>`; for(const [f,lab] of [[0,'0'],[0.5,'50%'],[1,'100%']]){ const x=TX0+f*TW; s+=`<line x1="${x}" y1="${TOP-6}" x2="${x}" y2="${H-10}" class="hair"/><text x="${x}" y="${TOP-12}" text-anchor="middle" class="sm mono mut">${lab}</text>`; } }
   STAGES.forEach((st,si)=>{ const gx0=sx(si,0), gx1=sx(si,NL-1)+SLOT, gm=(gx0+gx1)/2; s+=`<text x="${gm}" y="${TOP-24}" text-anchor="middle" class="lg">${esc(st.name)}</text><line x1="${gx0}" y1="${TOP-12}" x2="${gx1}" y2="${TOP-12}" class="hair2"/>`; });
-  s+=`<text x="${X1+10}" y="${TOP-24}" class="sm mono mut">cells · of ${NCELL}</text>`;
+  s+=`<text x="${X1+10}" y="${TOP-24}" class="sm mono mut">score</text>`;
   function bar(r, y, bold){ const ym=y+RH/2; const name=r.b?r.b.short:'All ten together';
     let sub='union of the ten';
     if(r.cen){ const c=r.cen; sub = r.b ? (c.advertised && c.advertised>c.public ? `${c.public} public · ${c.advertised} in total` : `${c.public} public tasks`) : `${c.screened} public tasks screened`; }
@@ -455,10 +457,10 @@ function renderScore(){
     s+=`<g class="scorerow" data-bm="${r.b?esc(r.b.id):'all'}">`;
     s+=`<g tabindex="0" role="button" data-tt="score" data-bm="${r.b?esc(r.b.id):'all'}" aria-label="${esc(name)}: ${r.cen?r.cen.L+' of '+r.cen.screened+' public tasks touch the life cycle; ':''}${r.meas} of ${NCELL} cells measured, ${r.any} with any evidence"><rect x="0" y="${y}" width="${L}" height="${RH}" fill="transparent"/><text x="${L-12}" y="${ym-1}" text-anchor="end" class="md" style="font-weight:${bold?600:500}">${esc(name)}</text><text x="${L-12}" y="${ym+12}" text-anchor="end" class="sm mono mut">${esc(sub)}</text></g>`;
     if(hasCen && r.cen){ const w=TW*share(r.cen); s+=`<rect x="${TX0}" y="${ym-BH/2}" width="${TW}" height="${BH}" rx="2" class="ev0"/>`; if(w>0) s+=`<rect x="${TX0}" y="${ym-BH/2}" width="${Math.max(2,w)}" height="${BH}" rx="2" style="fill:var(--ink-2)"/>`; s+=`<text x="${TX1+8}" y="${ym+4}" class="md mono" style="font-weight:${bold?600:500};${r.cen.L?'':'fill:var(--muted)'}">${r.cen.L}/${r.cen.screened}</text>`; }
-    if(r.any>0) s+=`<rect x="${X0}" y="${ym-BH/2}" width="${xEnd(r.any)-X0}" height="${BH}" rx="4" class="ev2" opacity=".45"/>`;
-    if(r.meas>0) s+=`<rect x="${X0}" y="${ym-BH/2}" width="${xEnd(r.meas)-X0}" height="${BH}" rx="4" class="ev3" opacity=".55"/>`;
-    STAGES.forEach((st,si)=>{ LAYERS.forEach((ly,li)=>{ const kind=r.cells.get(st.id+'|'+ly.id); const x=sx(si,li)+(SLOT-MK)/2; const cls=kind==='measured'?'ev3 cellmark':kind?'ev2 cellmark':'cellmark none'; s+=`<rect x="${x}" y="${ym-MK/2}" width="${MK}" height="${MK}" rx="1.5" class="${cls}" tabindex="0" role="img" data-tt="cell" data-bm="${r.b?esc(r.b.id):'all'}" data-stage="${st.id}" data-layer="${ly.id}" aria-label="${esc(name)}, ${esc(st.name)} / ${esc(ly.name)}: ${kind?KIND[kind].label:'no task'}"/>`; }); });
-    s+=`<text x="${X1+10}" y="${ym+4}" class="md mono" style="font-weight:${bold?600:500};${r.meas?'':'fill:var(--muted)'}">${r.meas} · ${r.pct}%</text></g>`; }
+    if(r.wtd>0) s+=`<rect x="${X0}" y="${ym-BH/2}" width="${xs(r.wtd)-X0}" height="${BH}" rx="4" class="ev2" opacity=".55"/>`;
+    if(r.meas>0) s+=`<rect x="${X0}" y="${ym-BH/2}" width="${xs(r.meas)-X0}" height="${BH}" rx="4" class="ev3" opacity=".8"/>`;
+    STAGES.forEach((st,si)=>{ LAYERS.forEach((ly,li)=>{ const kind=r.cells.get(st.id+'|'+ly.id); const x=sx(si,li)+(SLOT-MK)/2; const cls=kind==='measured'?'ev3 cellmark':kind==='bounded'?'ev2 cellmark':kind?'ev1 cellmark':'cellmark none'; s+=`<rect x="${x}" y="${ym-MK/2}" width="${MK}" height="${MK}" rx="1.5" class="${cls}" tabindex="0" role="img" data-tt="cell" data-bm="${r.b?esc(r.b.id):'all'}" data-stage="${st.id}" data-layer="${ly.id}" aria-label="${esc(name)}, ${esc(st.name)} / ${esc(ly.name)}: ${kind?KIND[kind].label:'no task'}"/>`; }); });
+    s+=`<text x="${X1+10}" y="${ym-1}" class="md mono" style="font-weight:600">${r.pct}%</text><text x="${X1+10}" y="${ym+12}" class="sm mono mut">${r.any} of ${NCELL} cells</text></g>`; }
   for(const r of rows){ bar(r, y, false); y+=RH; }
   s+='</svg>'; $('#score-svg').innerHTML=s;
   const best=rows[0], T=union.cen;
@@ -468,13 +470,13 @@ function renderScore(){
     const la=$('#lede-answer'); if(la) la.textContent=`Of the ${T.screened} public tasks in ten benchmarks, ${T.L} touch that life cycle, and together they execute the real workload in ${union.meas} of the ${NCELL} cells of that axis.`;
     const lg=$('#score-legend-tasks'); if(lg) lg.hidden=false;
   } else {
-    $('#score-title').textContent=`No benchmark executes the real workload in more than ${best.pct}% of the surface; all ten together reach ${union.pct}%`;
-    $('#score-cap').textContent=`Each mark is one of the ${NCELL} stage × layer cells, grouped by stage; within a stage the seven marks run methods · data & evaluation · engines · distributed · state · kernels · cluster. A dark mark means at least one of the benchmark's verifiers executes the real LLM workload there (a training run, a finetune or a kernel on the declared hardware); a lighter mark means only unit tests, simulations or related evidence; the bar behind them and the number count those cells, dark for the real workload and lighter for any evidence. WeirdML and EdgeBench run real GPU workloads, but not LLM ones, so they score zero on this surface.`;
+    $('#score-title').textContent=`No benchmark covers more than ${best.pct}% of the surface; together the ten cover ${union.pct}% and execute the real workload in ${union.meas} of ${NCELL} cells`;
+    $('#score-cap').textContent=`Each mark is one of the ${NCELL} stage × layer cells, grouped by stage; within a stage the seven marks run methods · data & evaluation · engines · distributed · state · kernels · cluster, shaded by the strongest evidence there: the real LLM workload executed (a training run, a finetune or a kernel on the declared hardware), bounded unit or artifact tests, or related and simulated evidence. The score behind each row weights those cells 1, ½ and ¼; the dark part of the bar is the executed cells alone. WeirdML and EdgeBench run real GPU workloads, but not LLM ones, so only related credit applies.`;
     const la=$('#lede-answer'); if(la) la.textContent=`Together, the ten benchmarks execute the real workload in ${union.meas} of the ${NCELL} cells of that axis.`;
   }
 }
 bindTips($('#score-svg'), el=>{ if(el.dataset.tt==='cell'){ const b=el.dataset.bm==='all'?null:BM[el.dataset.bm], st=STAGES[SIDX[el.dataset.stage]], ly=LAYERS.find(x=>x.id===el.dataset.layer); const es=cellEntries(st.id, ly.id, b?new Set([b.id]):null); const n=h('div'); n.append(h('b',{text:`${b?b.short:'All benchmarks'} · ${st.name} / ${ly.name}`})); n.append(h('div',{class:'m',text: es.length? `${KIND[es[0].kind].label} · ${es.length} ${es.length===1?'entry':'entries'}` : 'no audited task reaches this cell'})); for(const e of es.slice(0,3)) n.append(h('p',{text:`${e.t.title}${e.t.count>1?' ×'+e.t.count:''} — ${e.relation}`})); if(es.length>3) n.append(h('p',{text:`… and ${es.length-3} more`})); return n; }
-  if(el.dataset.tt!=='score') return null; const r = el.dataset.bm==='all' ? scoreRow(null) : scoreRow(BM[el.dataset.bm]); const n=h('div'); n.append(h('b',{text: r.b? r.b.name : 'All ten benchmarks'})); if(r.cen){ const c=r.cen; n.append(h('div',{class:'m',text:`census: ${c.screened} public tasks · ${c.L} touch the life cycle · ${c.A} other ML or systems · ${c.O} outside`})); } n.append(h('div',{class:'m',text:`${r.meas} cells measured · ${r.any-r.meas} other evidence only · ${NCELL-r.any} untouched`})); const M=[...r.cells].filter(([k,v])=>v==='measured').map(([k])=>cellName(k)); const O=[...r.cells].filter(([k,v])=>v!=='measured').map(([k,v])=>`${cellName(k)} (${v==='adjacent'?'related':v})`); if(M.length) n.append(h('p',null,h('span',{style:'font-weight:600',text:'Measured: '}),M.join('; '))); if(O.length) n.append(h('p',null,h('span',{style:'font-weight:600',text:'Other evidence: '}),O.join('; '))); return n; });
+  if(el.dataset.tt!=='score') return null; const r = el.dataset.bm==='all' ? scoreRow(null) : scoreRow(BM[el.dataset.bm]); const n=h('div'); n.append(h('b',{text: r.b? r.b.name : 'All ten benchmarks'})); if(r.cen){ const c=r.cen; n.append(h('div',{class:'m',text:`census: ${c.screened} public tasks · ${c.L} touch the life cycle · ${c.A} other ML or systems · ${c.O} outside`})); } n.append(h('div',{class:'m',text:`score ${r.pct}% · ${r.meas} executed · ${[...r.cells.values()].filter(v=>v==='bounded').length} bounded · ${[...r.cells.values()].filter(v=>v==='adjacent').length} related · ${NCELL-r.any} untouched`})); const M=[...r.cells].filter(([k,v])=>v==='measured').map(([k])=>cellName(k)); const O=[...r.cells].filter(([k,v])=>v!=='measured').map(([k,v])=>`${cellName(k)} (${v==='adjacent'?'related':v})`); if(M.length) n.append(h('p',null,h('span',{style:'font-weight:600',text:'Measured: '}),M.join('; '))); if(O.length) n.append(h('p',null,h('span',{style:'font-weight:600',text:'Other evidence: '}),O.join('; '))); return n; });
 $('#score-svg').addEventListener('click', e=>{ const g=e.target.closest('[data-tt="score"]'); if(!g||g.dataset.bm==='all') return; $('#dots-fold').open=true; openBm(BM[g.dataset.bm]); });
 $('#score-svg').addEventListener('keydown', e=>{ if(e.key!=='Enter'&&e.key!==' ') return; const g=e.target.closest('[data-tt="score"]'); if(!g||g.dataset.bm==='all') return; e.preventDefault(); $('#dots-fold').open=true; openBm(BM[g.dataset.bm]); });
 
@@ -532,6 +534,7 @@ function openCell(st,l){ selCell=st.id+':'+l.id; renderGrid(); const d=$('#cell-
 
 // ---------- changes
 (function(){ const ul=$('#changes-list'); if(!ul) return; const items=[
+  ['Version 2.5 (23 September).', 'Title is now "How to benchmark RSI" with an abstract that frames the audit; the coverage score weights executed, bounded and related cells 1, ½ and ¼ so unit-test suites are no longer scored zero; bars are stronger and the cell marks smaller, with three shades.'],
   ['Version 2.4 (23 September).', 'The lead figure is a per-benchmark coverage score: the 35 stage × layer cells drawn as marks grouped by stage, dark where a verifier executes the real LLM workload, light for unit-test, simulated or related evidence, with a translucent bar and a number counting the dark cells. The task-level dot figure is folded beneath it. Four benchmarks score zero after their verifiers were re-read at the pinned commits: TB 2.1 and DeepSWE are CPU-only unit tests, WeirdML and EdgeBench run non-LLM workloads. WeirdML v3 hardware corrected to a four-CPU, one-GPU sandbox; the companion note coverage_score.md records the audit.'],
   ['Version 2.3 (22 September).', 'Coverage figure moved first; title shortened; subheads, captions and section text cut to about half; the changelog became a working-copy appendix that the website deploy strips.'],
   ['Version 2.2 (22 September).', 'The page is a review, not a benchmark proposal: the target box, key item and drawer labels that named a benchmark are gone, and the multi-device mechanisms table on the agentic page is stated on its own terms. The overview\'s post-training section is now three blocks that open the RL loop, the post-training recipes and the agentic infrastructure pages.'],
