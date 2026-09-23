@@ -180,6 +180,14 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 .pagehead{padding-block:34px 24px; border-bottom:1px solid var(--line)}
 .pagehead .back{font:12px var(--mono); color:var(--muted); display:block; margin-bottom:12px}
 
+.fold{border:1px solid var(--line); border-radius:8px; background:var(--surface); padding:0 16px; margin-top:12px}
+.fold>summary{cursor:pointer; padding:12px 0; font:13px var(--mono); color:var(--ink-2); list-style:none; display:flex; align-items:center; gap:10px}
+.fold>summary::before{content:'▸'; color:var(--muted); font-size:12px}
+.fold[open]>summary::before{content:'▾'}
+.fold>summary::-webkit-details-marker{display:none}
+.fold[open]>summary{border-bottom:1px solid var(--line); margin-bottom:12px}
+.fold>:last-child{margin-bottom:14px}
+
 </style>
 <header class="top">
   <a href="/blog.html" style="font:12px var(--mono);color:var(--muted);white-space:nowrap">← blog</a>
@@ -240,7 +248,10 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 <section class="block" id="sources">
   <span class="section-no">A5</span>
   <h2>Sources on this page</h2>
-  <div id="src-table"></div>
+  <details class="fold" id="src-fold">
+    <summary id="src-summary">Show sources</summary>
+    <div id="src-table"></div>
+  </details>
 </section>
 </main>
 <footer id="foot"></footer>
@@ -341,7 +352,7 @@ bindTips($('#recipe-list'), el=>{ if(el.dataset.tt!=='step') return null; const 
 function renderFw(){ const band=$('#fwband'); band.replaceChildren(); for(const s of PT.substages){ const col=h('div',{class:'codecol'}); col.append(h('h4',null,h('i',{class:'dot '+CLS[s.id],style:'margin-right:6px'}),s.name,h('span',{text:s.sub}))); const chips=h('div',{class:'chips'}); for(const c of (PT.frameworks[s.id]||[])) chips.append(h('button',{class:'chipbtn',type:'button',onclick:(ev)=>{ document.querySelectorAll('.chipbtn.sel').forEach(b=>b.classList.remove('sel')); ev.currentTarget.classList.add('sel'); const d=$('#fw-drawer'); d.hidden=false; d.replaceChildren(h('h3',{text:c.name}),h('div',{class:'meta'},h('span',{text:c.org}),h('span',{text:'sub-stage: '+s.name}),tagEl(c.tag)),h('p',{text:c.what}),h('div',{class:'links'},link(c.url,'source ↗'))); }},c.name,h('small',{text:c.org}))); col.append(chips); band.append(col); } }
 (function(){ const t=h('table',{class:'src'}); t.append(h('thead',null,h('tr',null,h('th',{text:'Stabilizer'}),h('th',{text:'What it does and who pins it'}),h('th',{text:'Sources'})))); const tb=h('tbody'); for(const s of PT.stabilizers) tb.append(h('tr',null,h('td',{class:'n',text:s.name}),h('td',{text:s.what}),h('td',null,...s.sources.map((x,i)=>h('span',null,i?' · ':'',link(x.url,x.fw),' ',tagEl(x.tag)))))); t.append(tb); $('#stab-table').replaceChildren(t); })();
 (function(){ const es=U.stageEntries('posttrain'); $('#cov-sub').textContent=`${es.length} audited entries reach post-training · ${es.filter(e=>e.kind==='measured').length} measured · ${es.filter(e=>e.kind==='bounded').length} bounded · ${es.filter(e=>e.kind==='adjacent').length} related`; $('#cov-list').replaceChildren(U.coverageList('posttrain')); })();
-(function(){ const rows=[]; for(const m of models) rows.push({name:m.name,what:m.summary,url:m.url,tag:m.tag,kind:'recipe'}); for(const [sid,chips] of Object.entries(PT.frameworks)) for(const c of chips) rows.push({name:c.name,what:c.what,url:c.url,tag:c.tag,kind:'framework · '+SUB[sid].name.toLowerCase()}); for(const s of PT.stabilizers) for(const x of s.sources) rows.push({name:x.fw,what:s.name,url:x.url,tag:x.tag,kind:'stabilizer'}); $('#src-table').replaceChildren(U.sourcesTable(rows)); })();
+(function(){ const rows=[]; for(const m of models) rows.push({name:m.name,what:m.summary,url:m.url,tag:m.tag,kind:'recipe'}); for(const [sid,chips] of Object.entries(PT.frameworks)) for(const c of chips) rows.push({name:c.name,what:c.what,url:c.url,tag:c.tag,kind:'framework · '+SUB[sid].name.toLowerCase()}); for(const s of PT.stabilizers) for(const x of s.sources) rows.push({name:x.fw,what:s.name,url:x.url,tag:x.tag,kind:'stabilizer'}); $('#src-table').replaceChildren(U.sourcesTable(rows)); const sub=$('#src-table .subhead'); if(sub) $('#src-summary').textContent='Show sources · '+sub.textContent; })();
 U.renderFooter($('#foot')); renderRecipes(); renderFw();
 })();
 </script>

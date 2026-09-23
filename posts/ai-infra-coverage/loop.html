@@ -180,6 +180,14 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 .pagehead{padding-block:34px 24px; border-bottom:1px solid var(--line)}
 .pagehead .back{font:12px var(--mono); color:var(--muted); display:block; margin-bottom:12px}
 
+.fold{border:1px solid var(--line); border-radius:8px; background:var(--surface); padding:0 16px; margin-top:12px}
+.fold>summary{cursor:pointer; padding:12px 0; font:13px var(--mono); color:var(--ink-2); list-style:none; display:flex; align-items:center; gap:10px}
+.fold>summary::before{content:'▸'; color:var(--muted); font-size:12px}
+.fold[open]>summary::before{content:'▾'}
+.fold>summary::-webkit-details-marker{display:none}
+.fold[open]>summary{border-bottom:1px solid var(--line); margin-bottom:12px}
+.fold>:last-child{margin-bottom:14px}
+
 </style>
 <header class="top">
   <a href="/blog.html" style="font:12px var(--mono);color:var(--muted);white-space:nowrap">← blog</a>
@@ -225,7 +233,10 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 <section class="block" id="sources">
   <span class="section-no">L3</span>
   <h2>Sources on this page</h2>
-  <div id="src-table"></div>
+  <details class="fold" id="src-fold">
+    <summary id="src-summary">Show sources</summary>
+    <div id="src-table"></div>
+  </details>
 </section>
 </main>
 <footer id="foot"></footer>
@@ -319,7 +330,7 @@ const initial=(location.hash||'').slice(1); const ids=new Set(all.map(c=>c.id));
 U.renderLoop({svgEl:$('#loop-svg'), drawerEl:$('#loop-drawer'), selected: ids.has(initial)?initial:'publish'});
 (function(){ const touched=comps.filter(c=>c.tasks.length).map(c=>c.name.toLowerCase()); const untouched=comps.filter(c=>!c.tasks.length).map(c=>c.name.toLowerCase()); $('#loop-cap').textContent=`Audited tasks touch ${touched.join(' and ')}: the learner through fixed algorithm hooks in verl, one real FSDP finetuning pipeline and one small GPT-2 preference loop; rollout engines through CPU parser repairs. Nothing in the audited set exercises ${untouched.join(', ')}, and the rails are reached only by static checkpoint conversion and a simulated placement problem. ${A.rl_loop.synthesis}`; })();
 (function(){ const t=h('table',{class:'src'}); t.append(h('thead',null,h('tr',null,h('th',{text:'Component'}),h('th',{text:'What it does'}),h('th',{text:'Implementations'}),h('th',{text:'Audited tasks'})))); const tb=h('tbody'); for(const c of all){ const tks=U.nodeTasks(c); tb.append(h('tr',null,h('td',{class:'n'},h('a',{href:'#'+c.id,text:c.name,onclick:(e)=>{e.preventDefault(); location.hash=c.id; U.renderLoopDrawer($('#loop-drawer'), c.id); $('#loop').scrollIntoView({block:'start'});}})),h('td',{text:c.detail}),h('td',{text:c.implementations.map(i=>i.fw).join(' · ')}),h('td',null, tks.length? tks.map((x,i)=>h('span',null,i?' · ':'',h('i',{class:'dot '+KIND[x.kind].cls,style:'margin-right:4px'}),BM[x.t.benchmark].short+': '+x.t.title)) : h('span',{class:'kindtag',text:'none'})))); } t.append(tb); $('#comp-table').replaceChildren(t); })();
-(function(){ const rows=[]; for(const c of all) for(const im of c.implementations) rows.push({name:im.fw,what:im.what,url:im.url,tag:im.tag,kind:'loop · '+c.name.toLowerCase()}); $('#src-table').replaceChildren(U.sourcesTable(rows)); })();
+(function(){ const rows=[]; for(const c of all) for(const im of c.implementations) rows.push({name:im.fw,what:im.what,url:im.url,tag:im.tag,kind:'loop · '+c.name.toLowerCase()}); $('#src-table').replaceChildren(U.sourcesTable(rows)); const sub=$('#src-table .subhead'); if(sub) $('#src-summary').textContent='Show sources · '+sub.textContent; })();
 window.addEventListener('hashchange',()=>{ const id=(location.hash||'').slice(1); if(ids.has(id)) U.renderLoopDrawer($('#loop-drawer'), id); });
 U.renderFooter($('#foot'));
 })();

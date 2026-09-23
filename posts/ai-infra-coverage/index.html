@@ -180,6 +180,14 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 .pagehead{padding-block:34px 24px; border-bottom:1px solid var(--line)}
 .pagehead .back{font:12px var(--mono); color:var(--muted); display:block; margin-bottom:12px}
 
+.fold{border:1px solid var(--line); border-radius:8px; background:var(--surface); padding:0 16px; margin-top:12px}
+.fold>summary{cursor:pointer; padding:12px 0; font:13px var(--mono); color:var(--ink-2); list-style:none; display:flex; align-items:center; gap:10px}
+.fold>summary::before{content:'▸'; color:var(--muted); font-size:12px}
+.fold[open]>summary::before{content:'▾'}
+.fold>summary::-webkit-details-marker{display:none}
+.fold[open]>summary{border-bottom:1px solid var(--line); margin-bottom:12px}
+.fold>:last-child{margin-bottom:14px}
+
 </style>
 <header class="top">
   <a href="/blog.html" style="font:12px var(--mono);color:var(--muted);white-space:nowrap">← blog</a>
@@ -267,6 +275,8 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 <section class="block" id="sources">
   <span class="section-no">05</span>
   <h2>Sources, verification tags and method</h2>
+  <details class="fold" id="src-fold">
+    <summary id="src-summary">Show sources, tags and method</summary>
   <p>Every claim on this page carries one of these tags. <span class="tag spot">spot-checked</span> was re-read on the primary page in this workspace; <span class="tag note">note 2026-09-21</span> and <span class="tag note">prior note</span> come from the workspace's pinned companion notes; <span class="tag agent">agent-reported</span> comes from a delegated sweep and should be re-read before it is quoted in a paper.</p>
   <ul class="rules">
     <li>Benchmark versions and commits are pinned; Terminal-Bench 2.1 and 4.0 share no tasks.</li>
@@ -275,6 +285,7 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
   </ul>
   <p>Scale's RSI Bench (2026) is a different project from the RSI-Exam audited here.</p>
   <div id="src-table"></div>
+  </details>
 </section>
 
 </main>
@@ -468,7 +479,7 @@ function openCell(st,l){ selCell=st.id+':'+l.id; renderGrid(); const d=$('#cell-
  ]; for(const [b,t] of items) ul.append(h('li',null,h('b',{text:b+' '}),t)); })();
 
 // ---------- sources
-(function(){ const rows=[]; for(const m of A.pipelines.models) rows.push({name:m.name, what:m.summary, url:m.url, tag:m.tag, kind:'pipeline'}); for(const [sid,chips] of Object.entries(A.pipelines.code_by_stage)) for(const c of chips) rows.push({name:c.name, what:c.what, url:c.url, tag:c.tag, kind:'code · '+STAGES[SIDX[sid]].name.toLowerCase()}); for(const b of A.benchmarks) rows.push({name:b.name, what:b.corpus, url:b.url, tag:b.tag, kind:'benchmark'}); for(const c of [...A.rl_loop.components,...A.rl_loop.rails]) for(const im of c.implementations) rows.push({name:im.fw, what:im.what, url:im.url, tag:im.tag, kind:'RL loop · '+c.name.toLowerCase()}); $('#src-table').replaceChildren(U.sourcesTable(rows)); })();
+(function(){ const rows=[]; for(const m of A.pipelines.models) rows.push({name:m.name, what:m.summary, url:m.url, tag:m.tag, kind:'pipeline'}); for(const [sid,chips] of Object.entries(A.pipelines.code_by_stage)) for(const c of chips) rows.push({name:c.name, what:c.what, url:c.url, tag:c.tag, kind:'code · '+STAGES[SIDX[sid]].name.toLowerCase()}); for(const b of A.benchmarks) rows.push({name:b.name, what:b.corpus, url:b.url, tag:b.tag, kind:'benchmark'}); for(const c of [...A.rl_loop.components,...A.rl_loop.rails]) for(const im of c.implementations) rows.push({name:im.fw, what:im.what, url:im.url, tag:im.tag, kind:'RL loop · '+c.name.toLowerCase()}); $('#src-table').replaceChildren(U.sourcesTable(rows)); const sub=$('#src-table .subhead'); if(sub) $('#src-summary').textContent='Show sources, tags and method · '+sub.textContent; })();
 U.renderFooter($('#foot'), []);
 renderLife(); renderCode(); renderCoverage(); renderFilters(); renderGrid();
 })();

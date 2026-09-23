@@ -180,6 +180,14 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 .pagehead{padding-block:34px 24px; border-bottom:1px solid var(--line)}
 .pagehead .back{font:12px var(--mono); color:var(--muted); display:block; margin-bottom:12px}
 
+.fold{border:1px solid var(--line); border-radius:8px; background:var(--surface); padding:0 16px; margin-top:12px}
+.fold>summary{cursor:pointer; padding:12px 0; font:13px var(--mono); color:var(--ink-2); list-style:none; display:flex; align-items:center; gap:10px}
+.fold>summary::before{content:'▸'; color:var(--muted); font-size:12px}
+.fold[open]>summary::before{content:'▾'}
+.fold>summary::-webkit-details-marker{display:none}
+.fold[open]>summary{border-bottom:1px solid var(--line); margin-bottom:12px}
+.fold>:last-child{margin-bottom:14px}
+
 </style>
 <header class="top">
   <a href="/blog.html" style="font:12px var(--mono);color:var(--muted);white-space:nowrap">← blog</a>
@@ -245,7 +253,10 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 <section class="block" id="sources">
   <span class="section-no">B6</span>
   <h2>Sources on this page</h2>
-  <div id="src-table"></div>
+  <details class="fold" id="src-fold">
+    <summary id="src-summary">Show sources</summary>
+    <div id="src-table"></div>
+  </details>
 </section>
 </main>
 <footer id="foot"></footer>
@@ -341,7 +352,7 @@ $('#stale-table').replaceChildren(table(['System','Knob','Published value','In-f
 $('#ledger-table').replaceChildren(table(['System','What failed','How it recovered','Source'], AG.ledger, r=>[h('td',{class:'n',text:r.system}),h('td',{text:r.incident}),h('td',{text:r.recovery}),h('td',null,src(r))]));
 $('#mech-table').replaceChildren(table(['Mechanism','Why it needs several devices','Documented on this page by'], AG.mechanisms, r=>[h('td',{class:'n',text:r.family}),h('td',{text:r.why}),h('td',{text:r.grounding})]));
 (function(){ const es=U.stageEntries('agentic'); $('#cov-sub').textContent=`${es.length} audited entries reach agentic RL · all related`; $('#cov-list').replaceChildren(U.coverageList('agentic')); })();
-(function(){ const rows=[]; for(const r of AG.fleets) rows.push({name:r.system,what:r.concurrency,url:r.url,tag:r.tag,kind:'fleet'}); for(const r of AG.staleness) rows.push({name:r.system,what:r.knob+': '+r.value,url:r.url,tag:r.tag,kind:'staleness'}); for(const r of AG.ledger) rows.push({name:r.system,what:r.incident,url:r.url,tag:r.tag,kind:'ledger'}); $('#src-table').replaceChildren(U.sourcesTable(rows)); })();
+(function(){ const rows=[]; for(const r of AG.fleets) rows.push({name:r.system,what:r.concurrency,url:r.url,tag:r.tag,kind:'fleet'}); for(const r of AG.staleness) rows.push({name:r.system,what:r.knob+': '+r.value,url:r.url,tag:r.tag,kind:'staleness'}); for(const r of AG.ledger) rows.push({name:r.system,what:r.incident,url:r.url,tag:r.tag,kind:'ledger'}); $('#src-table').replaceChildren(U.sourcesTable(rows)); const sub=$('#src-table .subhead'); if(sub) $('#src-summary').textContent='Show sources · '+sub.textContent; })();
 U.renderFooter($('#foot'));
 })();
 </script>
