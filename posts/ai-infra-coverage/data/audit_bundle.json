@@ -1712,7 +1712,11 @@
    "audit": "task-level",
    "tag": "prior-note",
    "selected": 8,
-   "adoption": "Reported in Google's Gemini 3.8 Flash evaluation methodology and Anthropic's Fable 5.1 announcement (Sept 2026)."
+   "adoption": "Reported in Google's Gemini 3.8 Flash evaluation methodology and Anthropic's Fable 5.1 announcement (Sept 2026).",
+   "public_tasks": 66,
+   "screened_tasks": 66,
+   "lifecycle_tasks": 8,
+   "census_basis": "v1 audit screened all 66 task directories (5 Sep); 8 touch LLM infrastructure"
   },
   {
    "id": "tb21",
@@ -1728,7 +1732,11 @@
    "audit": "task-level",
    "tag": "spot-checked",
    "selected": 0,
-   "adoption": "Google Gemini 3.5 Flash model card (May 2026) and Anthropic's mid-2026 system cards report 2.1; labs have since moved to 4.0. Shares no tasks with 4.0."
+   "adoption": "Google Gemini 3.5 Flash model card (May 2026) and Anthropic's mid-2026 system cards report 2.1; labs have since moved to 4.0. Shares no tasks with 4.0.",
+   "public_tasks": 89,
+   "screened_tasks": 89,
+   "lifecycle_tasks": 8,
+   "census_basis": "all 89 task instructions screened at commit 7131e43; 8 touch LLM infrastructure"
   },
   {
    "id": "deepswe",
@@ -1744,7 +1752,11 @@
    "audit": "task-level",
    "tag": "prior-note",
    "selected": 3,
-   "adoption": "Reported in Google's Gemini 3.8 Flash evaluation methodology (Sept 2026)."
+   "adoption": "Reported in Google's Gemini 3.8 Flash evaluation methodology (Sept 2026).",
+   "public_tasks": 113,
+   "screened_tasks": 113,
+   "lifecycle_tasks": 3,
+   "census_basis": "all 113 task titles screened (5 Sep); 3 touch LLM infrastructure"
   },
   {
    "id": "mls",
@@ -1760,7 +1772,11 @@
    "audit": "task-level",
    "tag": "prior-note",
    "selected": 14,
-   "adoption": "Kimi K3 evaluation footnotes name MLS-Bench-Lite."
+   "adoption": "Kimi K3 evaluation footnotes name MLS-Bench-Lite.",
+   "public_tasks": 140,
+   "screened_tasks": 140,
+   "lifecycle_tasks": 140,
+   "census_basis": "benchmark scope: every task is an ML-systems task for LLM training or serving; 14 audited at task level"
   },
   {
    "id": "re",
@@ -1776,7 +1792,11 @@
    "audit": "task-level",
    "tag": "prior-note",
    "selected": 7,
-   "adoption": "Used in METR's frontier-model evaluations; native scores are not issue-resolution rates."
+   "adoption": "Used in METR's frontier-model evaluations; native scores are not issue-resolution rates.",
+   "public_tasks": 7,
+   "screened_tasks": 7,
+   "lifecycle_tasks": 7,
+   "census_basis": "all 7 environment families audited"
   },
   {
    "id": "rsi",
@@ -1792,7 +1812,11 @@
    "audit": "task-level",
    "tag": "prior-note",
    "selected": 8,
-   "adoption": "Self-published leaderboard; frontier model-card adoption not established."
+   "adoption": "Self-published leaderboard; frontier model-card adoption not established.",
+   "public_tasks": 35,
+   "screened_tasks": 8,
+   "lifecycle_tasks": 8,
+   "census_basis": "8 of 35 public tasks audited and all touch the life cycle; the other 27 were not screened"
   },
   {
    "id": "ptb",
@@ -1808,7 +1832,11 @@
    "audit": "family-level",
    "tag": "spot-checked",
    "selected": 1,
-   "adoption": "ICML 2026 poster; Epoch AI tracks the public leaderboard. No frontier model card found citing it."
+   "adoption": "ICML 2026 poster; Epoch AI tracks the public leaderboard. No frontier model card found citing it.",
+   "public_tasks": 28,
+   "screened_tasks": 28,
+   "lifecycle_tasks": 28,
+   "census_basis": "every task post-trains a base model"
   },
   {
    "id": "infbench",
@@ -1824,7 +1852,11 @@
    "audit": "family-level",
    "tag": "spot-checked",
    "selected": 1,
-   "adoption": "Authors' leaderboard (Sept 2026); independent of ISO-Bench and FlashInfer-Bench, which it cites. No frontier model card found citing it."
+   "adoption": "Authors' leaderboard (Sept 2026); independent of ISO-Bench and FlashInfer-Bench, which it cites. No frontier model card found citing it.",
+   "public_tasks": 4,
+   "screened_tasks": 4,
+   "lifecycle_tasks": 4,
+   "census_basis": "every scenario stands up an inference server"
   },
   {
    "id": "weirdml",
@@ -1840,7 +1872,11 @@
    "audit": "family-level",
    "tag": "spot-checked",
    "selected": 1,
-   "adoption": "Epoch AI runs v2 in its Benchmarking Hub and includes WeirdML in the Epoch Capabilities Index. No frontier model card found citing it."
+   "adoption": "Epoch AI runs v2 in its Benchmarking Hub and includes WeirdML in the Epoch Capabilities Index. No frontier model card found citing it.",
+   "public_tasks": 11,
+   "screened_tasks": 11,
+   "lifecycle_tasks": 0,
+   "census_basis": "task page (16 Sep): non-LLM machine-learning tasks only"
   },
   {
    "id": "edgebench",
@@ -1856,7 +1892,11 @@
    "audit": "family-level",
    "tag": "spot-checked",
    "selected": 1,
-   "adoption": "Self-reported leaderboard. Not an edge-device benchmark despite the name; the on-device candidates (MLPerf Inference Edge Agentic, edge-llm-bench) are engine performance harnesses, not agent tasks."
+   "adoption": "Self-reported leaderboard. Not an edge-device benchmark despite the name; the on-device candidates (MLPerf Inference Edge Agentic, edge-llm-bench) are engine performance harnesses, not agent tasks.",
+   "public_tasks": 51,
+   "screened_tasks": 51,
+   "lifecycle_tasks": 0,
+   "census_basis": "README task table: no task targets LLM training, serving, kernels or checkpoints"
   },
   {
    "id": "isobench",
