@@ -54,6 +54,7 @@ h1{font:500 clamp(26px,3.2vw,38px)/1.2 var(--serif); letter-spacing:-.01em; marg
 h2{font:500 clamp(20px,2.3vw,26px)/1.25 var(--serif); margin:0 0 8px; text-wrap:balance}
 h3{font:600 14.5px/1.4 var(--sans); margin:0 0 6px}
 .section-no{font:400 12px var(--mono); color:var(--muted); display:block; margin-bottom:6px; letter-spacing:.08em}
+.subtitle{font:500 clamp(17px,1.6vw,21px)/1.35 var(--serif); color:var(--ink-2); margin:-6px 0 14px; text-wrap:balance}
 .lede{font-size:17px; line-height:1.55; color:var(--ink-2); margin:0 0 22px}
 p{max-width:none}
 .intro{padding-block:40px 28px; border-bottom:1px solid var(--line)}
@@ -184,11 +185,10 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
   <a href="/blog.html" style="font:12px var(--mono);color:var(--muted);white-space:nowrap">← blog</a>
   <span class="brand">AI-Infra Environment Coverage</span>
   <nav aria-label="Sections">
-    <a href="#lifecycle">Life cycles</a>
     <a href="#coverage">Coverage</a>
+    <a href="#lifecycle">Life cycles</a>
     <a href="#dives">Deep dives</a>
     <a href="#grid">Stages × layers</a>
-    <a href="#changes">Changes</a>
     <a href="#sources">Sources</a>
     <a class="deep" href="loop.html">RL loop ↗</a>
     <a class="deep" href="posttrain.html">Post-training ↗</a>
@@ -200,9 +200,10 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 
 <main>
 <section class="intro" id="intro">
-  <p class="eyebrow">AI-Infra-Environment coverage audit · version 2.1 · source snapshots 5, 21 and 22 September 2026</p>
-  <h1>Which parts of a production LLM's life do public benchmark environments actually exercise?</h1>
-  <p class="lede">A model is built from a corpus, pretrained and continued, post-trained, taught to use tools, and served. Every one of those stages is run by real systems with public code or at least a published account. This page draws those life cycles from primary sources, then places every audited benchmark task on the same axis. The thin columns are the gaps.</p>
+  <p class="eyebrow">Coverage audit · version 2.3 · source snapshots 5, 21 and 22 September 2026</p>
+  <h1>AI-Infra Environment Coverage</h1>
+  <p class="subtitle">Which parts of an LLM's life cycle do public benchmarks actually test?</p>
+  <p class="lede">Every stage of a production LLM's life is run by real systems with public code or a published account. This review draws those life cycles from primary sources and places every audited benchmark task on the same axis.</p>
   <div class="facts" id="facts"></div>
   <div class="key" aria-label="Reading key">
     <span class="k"><i class="dot ev3"></i> measured runtime</span>
@@ -213,29 +214,10 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
   </div>
 </section>
 
-<section class="block" id="lifecycle">
-  <span class="section-no">01</span>
-  <h2>The life cycle, as production pipelines run it</h2>
-  <p class="subhead" id="life-sub"></p>
-  <p>A filled mark means public code or a released recipe exists for that stage; a ring means the stage is described in a technical report only. Hover a mark for the source's own vocabulary and numbers; select a row to read its stage names in order. Continued pretraining, annealing and long-context extension share the pretraining objective and trainer, so they sit inside the pretraining column. Older or thinner reports are hidden by default and can be shown dimmed.</p>
-  <figure id="fig-life" aria-label="Documented life cycles of models and recipes across five stages">
-    <div class="fig-title"><strong>Documented life cycles</strong><span id="life-meta"></span><label class="toggle"><input type="checkbox" id="showDim"> <span id="showDimLabel">show older sources</span></label></div>
-    <div class="scroll"><div id="life-svg"></div></div>
-    <div class="vocab" id="vocab"></div>
-    <figcaption>Stage names differ: OLMo says <em>midtraining</em>, Llama 3 says <em>annealing</em>, Qwen3 says <em>long-context stage</em>, GLM-4.5 names three mid-training sub-stages, MiMo-V2.6 calls it <em>agent-centric mid-training</em>. The shape is shared: a corpus, one long run with continuation phases, then rounds of SFT, preference, RL and increasingly on-policy distillation, and a serving system that also produces RL rollouts. Only Llama 3, LLM360 and MiMo-V2.6 publish failure statistics; the frontier reports give no GPU counts for RL.</figcaption>
-    <details class="tableview"><summary>Table view</summary><div id="life-table"></div></details>
-  </figure>
-  <h3 style="margin-top:22px">Where the public code lives</h3>
-  <p>Frameworks that implement each stage in the sources above. Every stage has open code, including on-policy distillation, which is not yet mainstream but appears in Qwen3, GLM-5, DeepSeek-V4, Kimi K3, Nemotron 3 Ultra and MiMo-V2.6. What is thin in public is an account of operating that code across nodes and through failures, which is exactly what a benchmark environment would have to reproduce. Select a chip for detail.</p>
-  <div class="codeband" id="codeband"></div>
-  <div class="drawer" id="code-drawer" hidden></div>
-</section>
-
 <section class="block" id="coverage">
-  <span class="section-no">02</span>
+  <span class="section-no">01</span>
   <h2>Where public benchmark environments land</h2>
-  <p class="subhead" id="cov-sub"></p>
-  <p>Every audited task is a dot at the stage its verifier reaches; a task that touches two stages appears twice. Color is evidence depth: <b>measured runtime</b> means a relevant computation is scored by execution, <b>bounded tests</b> means source or artifact checks with a narrower verifier, <b>related</b> means a fixed dependency, a simulation or a nearby task. Family entries stand for many near-identical instances and count once. Supplemental benchmarks were not task-audited and appear as rings.</p>
+  <p>Every audited task is a dot at the stage its verifier reaches; a task that touches two stages appears twice. Color is evidence depth: <b>measured runtime</b>, <b>bounded tests</b>, or <b>related</b> evidence such as a fixed dependency or a simulation. Family entries stand for many near-identical instances and count once; supplemental benchmarks were not task-audited and appear as rings.</p>
   <figure id="fig-cov" aria-label="Benchmark task coverage across five lifecycle stages">
     <div class="fig-title"><strong>Audited task entries by stage and benchmark</strong><span>hover a dot · select for detail</span></div>
     <div class="scroll"><div id="cov-svg"></div></div>
@@ -245,47 +227,56 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
   <div class="drawer" id="task-drawer" hidden></div>
 </section>
 
+<section class="block" id="lifecycle">
+  <span class="section-no">02</span>
+  <h2>The life cycle, as production pipelines run it</h2>
+  <p>A filled mark means public code or a released recipe exists for that stage; a ring means a report only. Hover a mark for the source's own vocabulary; select a row to read its stage names in order. Continued pretraining and long-context extension share the pretraining objective, so they sit inside that column; older reports are hidden behind the toggle.</p>
+  <figure id="fig-life" aria-label="Documented life cycles of models and recipes across five stages">
+    <div class="fig-title"><strong>Documented life cycles</strong><span id="life-meta"></span><label class="toggle"><input type="checkbox" id="showDim"> <span id="showDimLabel">show older sources</span></label></div>
+    <div class="scroll"><div id="life-svg"></div></div>
+    <div class="vocab" id="vocab"></div>
+    <figcaption>Stage names differ (OLMo says <em>midtraining</em>, Llama 3 says <em>annealing</em>, MiMo-V2.6 says <em>agent-centric mid-training</em>), but the shape is shared: a corpus, one long run with continuation phases, rounds of SFT, preference, RL and increasingly on-policy distillation, and a serving system that also produces RL rollouts. Only Llama 3, LLM360 and MiMo-V2.6 publish failure statistics.</figcaption>
+    <details class="tableview"><summary>Table view</summary><div id="life-table"></div></details>
+  </figure>
+  <h3 style="margin-top:22px">Where the public code lives</h3>
+  <p>Frameworks that implement each stage. Every stage has open code, including on-policy distillation; what is thin is any account of operating that code across nodes and through failures. Select a chip for detail.</p>
+  <div class="codeband" id="codeband"></div>
+  <div class="drawer" id="code-drawer" hidden></div>
+</section>
+
 <section class="block" id="dives">
   <span class="section-no">03</span>
   <h2>Inside post-training</h2>
-  <p class="subhead">Three pages go deeper than the overview</p>
+  <p>Three pages go deeper than the overview.</p>
   <div class="deep-cards cols3">
-    <a class="deep-card" href="loop.html"><span class="eyebrow">Inside post-training</span><strong>The RL loop</strong><p>The loop every production stack implements: prompts and environments, rollout, score and admit, learn, publish weights, with the checkpoint and placement rails. Each component carries its documented implementations and the audited tasks that touch it.</p><span class="go">Open the RL loop →</span></a>
-    <a class="deep-card" href="posttrain.html"><span class="eyebrow">Post-training</span><strong>Post-training recipes</strong><p>How eighteen documented pipelines sequence SFT, preference tuning, RL and on-policy distillation; the frameworks for each sub-stage; the stabilizers production runs rely on; and which audited tasks reach this stage.</p><span class="go">Open the recipes →</span></a>
-    <a class="deep-card" href="agentic.html"><span class="eyebrow">Agentic RL</span><strong>Agentic RL infrastructure</strong><p>Sandbox and harness fleets, staleness knobs across a dozen systems, a failure ledger drawn from the reports, and the mechanisms that only exist once a run spans more than one device.</p><span class="go">Open the infrastructure page →</span></a>
+    <a class="deep-card" href="loop.html"><span class="eyebrow">Inside post-training</span><strong>The RL loop</strong><p>The loop every production stack implements, component by component, with the implementations that document each and the audited tasks that touch it.</p><span class="go">Open the RL loop →</span></a>
+    <a class="deep-card" href="posttrain.html"><span class="eyebrow">Post-training</span><strong>Post-training recipes</strong><p>How eighteen documented pipelines sequence SFT, preference tuning, RL and on-policy distillation, with the frameworks and stabilizers behind them.</p><span class="go">Open the recipes →</span></a>
+    <a class="deep-card" href="agentic.html"><span class="eyebrow">Agentic RL</span><strong>Agentic RL infrastructure</strong><p>Sandbox and harness fleets, staleness knobs, a failure ledger, and the mechanisms that only exist across devices.</p><span class="go">Open the infrastructure page →</span></a>
   </div>
 </section>
 
 <section class="block" id="grid">
   <span class="section-no">04</span>
   <h2>Stages × infrastructure layers</h2>
-  <p class="subhead">The grid from the first audit, refined: distinct task entries per cell, colored by the strongest evidence</p>
-  <p>Layers are conceptual and cross-cut stages. A cell's count is the number of distinct task entries whose verifier reaches that stage and layer; family entries count once. Filter by benchmark, then select a cell for the production conditions an evaluator would still have to test and the evidence behind the count.</p>
+  <p>A cell counts the distinct task entries whose verifier reaches that stage and layer, colored by the strongest evidence; family entries count once. Filter by benchmark, then select a cell for the conditions an evaluator would still have to test and the evidence behind the count.</p>
   <div class="filters" id="filters"></div>
   <div class="grid-wrap"><table class="grid" id="gridtable"></table></div>
   <div class="drawer" id="cell-drawer" hidden></div>
 </section>
 
-<section class="block changes" id="changes">
-  <span class="section-no">05</span>
-  <h2>What changed since the 5 September audit</h2>
-  <ul id="changes-list"></ul>
-</section>
-
 <section class="block" id="sources">
-  <span class="section-no">06</span>
+  <span class="section-no">05</span>
   <h2>Sources, verification tags and method</h2>
   <p>Every claim on this page carries one of these tags. <span class="tag spot">spot-checked</span> was re-read on the primary page in this workspace; <span class="tag note">note 2026-09-21</span> and <span class="tag note">prior note</span> come from the workspace's pinned companion notes; <span class="tag agent">agent-reported</span> comes from a delegated sweep and should be re-read before it is quoted in a paper.</p>
   <ul class="rules">
-    <li>Pin benchmark versions and commits; Terminal-Bench 2.1 and 4.0 share no tasks and must not be merged into one score series.</li>
-    <li>Keep CPU simulation, real-GPU execution and multi-node verification separate; a simulated topology is simulation even when it describes 128 GPUs.</li>
-    <li>Do not turn a missing repository match into a universal absence claim; this is a curated audit, not a census or a coverage percentage.</li>
-    <li>Family entries (PostTrainBench, InferenceBench, WeirdML, EdgeBench) were read at the README and paper level; their instances are near-identical, so they count once.</li>
-    <li>Using a framework (verl, LLaMA-Factory, vLLM) for grading or research is not evidence of maintaining it; the verifier defines the evidence.</li>
-    <li>The lifecycle figure records what a source documents, not what an organization does; frontier reports omit RL cluster sizes, and no cited repository is a whole production platform.</li>
+    <li>Benchmark versions and commits are pinned; Terminal-Bench 2.1 and 4.0 share no tasks.</li>
+    <li>CPU simulation, real-GPU execution and multi-node verification are kept separate.</li>
+    <li>A missing repository match is never turned into a universal absence claim; this is a curated audit, not a census.</li>
   </ul>
+  <p>Scale's RSI Bench (2026) is a different project from the RSI-Exam audited here.</p>
   <div id="src-table"></div>
 </section>
+
 </main>
 <footer id="foot"></footer>
 <div class="tip" id="tip" role="tooltip" hidden></div>
@@ -399,7 +390,6 @@ function renderLife(){
   }
   s+='</svg>'; $('#life-svg').innerHTML=s;
   $('#life-meta').textContent=`${models.length} of ${all.length} sources shown · ${models.filter(m=>m.group==='reports').length} reports · ${models.filter(m=>m.group==='open').length} open pipelines`;
-  $('#life-sub').textContent=`${all.length} documented pipelines · ${all.length-dimCount} shown by default · marks are stages a source documents · line spans the documented range`;
   renderVocab(models);
   const tb=h('table'); tb.append(h('thead',null,h('tr',null,h('th',{text:'Source'}),...STAGES.map(st=>h('th',{text:st.name})),h('th',{text:'Tag'}))));
   const tbody=h('tbody'); for(const m of all){ tbody.append(h('tr',{style:m.dim?'opacity:.55':''},h('td',null,link(m.url,m.name)),...STAGES.map(st=>{const e=m.stages[st.id]; return h('td',null, e? [h('span',{class:'kindtag',text:e.ev==='code'?'code · ':'report · '}), e.label] : '—');}), h('td',null,tagEl(m.tag)))); } tb.append(tbody); $('#life-table').replaceChildren(tb);
@@ -440,8 +430,7 @@ function renderCoverage(){
   }
   s+='</svg>'; $('#cov-svg').innerHTML=s;
   const ag=totals[ai], pt=totals[SIDX.posttrain], sv=totals[SIDX.serve], pr=totals[SIDX.pretrain], dt=totals[SIDX.data];
-  $('#cov-sub').textContent=`${A.meta.task_entries} audited entries (${A.meta.task_instances} instances) · ${prim.length} primary and ${supp.length} supplemental benchmarks`;
-  $('#cov-cap').textContent=`Pretraining (${pr.n} entries) and serving (${sv.n}) are the dense columns, and both are dominated by single-node experiments, kernel microbenchmarks and CPU-verified source repairs; nothing in the pretraining column targets a continuation phase. Post-training (${pt.n}) is real GPU work with the infrastructure fixed around an editable hook or scored only through submitted weights. Data holds ${dt.n} entries. The agentic column holds ${ag.n} entries, all related rather than measured: no audited task trains a policy through tools, and none exercises weight publication, staleness control or recovery inside an RL loop.`;
+  $('#cov-cap').textContent=`Pretraining (${pr.n} entries) and serving (${sv.n}) are the dense columns, mostly single-node experiments, kernel microbenchmarks and CPU-verified source repairs; post-training (${pt.n}) is real GPU work around an editable hook or scored through submitted weights. The agentic column holds ${ag.n} related entries and no measured one: nothing trains a policy through tools or exercises weight publication, staleness control or recovery inside an RL loop.`;
   const tb=h('table'); tb.append(h('thead',null,h('tr',null,h('th',{text:'Task'}),h('th',{text:'Benchmark'}),h('th',{text:'Stages · layers · depth'}),h('th',{text:'Hardware'}),h('th',{text:'Tag'}))));
   const tbody=h('tbody'); for(const t of A.tasks){ tbody.append(h('tr',null,h('td',null,link(t.taskUrl,t.title), t.count>1?h('span',{class:'kindtag',text:' ×'+t.count}):null), h('td',{text:BM[t.benchmark].short}), h('td',{text:t.mappings.map(m=>`${STAGES[SIDX[m.stage]].name} / ${LAYERS.find(l=>l.id===m.layer).name} · ${m.kind}`).join('; ')}), h('td',{text:t.hardware}), h('td',null,tagEl(t.tag)))); } tb.append(tbody); $('#cov-table').replaceChildren(tb);
 }
@@ -466,7 +455,8 @@ function openCell(st,l){ selCell=st.id+':'+l.id; renderGrid(); const d=$('#cell-
    h('h3',{text:'Evidence',style:'margin-top:8px;font-size:13px'}), es.length? h('ul',null,...es.map(e=>h('li',null,h('i',{class:'dot '+KIND[e.kind].cls,style:'margin-right:6px'}),h('b',{text:BM[e.t.benchmark].short+' · '}),h('a',{href:'#coverage',text:e.t.title,onclick:(ev)=>{ev.preventDefault(); openTask(e.t, st.id);}}),e.t.count>1?' ×'+e.t.count:'',' — ',e.relation))) : h('p',{text:'No mapped entry in this filter. This is not a benchmark-wide or universal absence claim.'})); d.scrollIntoView({block:'nearest'}); }
 
 // ---------- changes
-(function(){ const ul=$('#changes-list'); const items=[
+(function(){ const ul=$('#changes-list'); if(!ul) return; const items=[
+  ['Version 2.3 (22 September).', 'Coverage figure moved first; title shortened; subheads, captions and section text cut to about half; the changelog became a working-copy appendix that the website deploy strips.'],
   ['Version 2.2 (22 September).', 'The page is a review, not a benchmark proposal: the target box, key item and drawer labels that named a benchmark are gone, and the multi-device mechanisms table on the agentic page is stated on its own terms. The overview\'s post-training section is now three blocks that open the RL loop, the post-training recipes and the agentic infrastructure pages.'],
   ['Version 2.1 (22 September).', 'The stage axis is five columns: continued pretraining, annealing and long-context extension now sit inside pretraining, because they share its objective and trainer and no benchmark task targets them separately. On-policy distillation joins the post-training vocabulary, with four code chips (NeMo-RL, TRL GKD, Tinker, MOPD). Six older or thinner reports are hidden behind a toggle. The RL loop moved into two deep-dive pages. The grid no longer highlights the agentic column. Prose runs at full width.'],
   ['MiMo-V2.6 folded in (22 September).', 'Xiaomi\'s report, blog, model cards, live RL dashboard and open-source branches were read directly: a pipeline row, seven RL-loop implementations, two code chips and a review note (notes/mimo_v26_review.html). It is the most detailed first-party account of mixed-task asynchronous agentic RL operations so far, including a failure timeline and a cost split.'],

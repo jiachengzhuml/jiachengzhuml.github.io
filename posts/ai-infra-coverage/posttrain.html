@@ -54,6 +54,7 @@ h1{font:500 clamp(26px,3.2vw,38px)/1.2 var(--serif); letter-spacing:-.01em; marg
 h2{font:500 clamp(20px,2.3vw,26px)/1.25 var(--serif); margin:0 0 8px; text-wrap:balance}
 h3{font:600 14.5px/1.4 var(--sans); margin:0 0 6px}
 .section-no{font:400 12px var(--mono); color:var(--muted); display:block; margin-bottom:6px; letter-spacing:.08em}
+.subtitle{font:500 clamp(17px,1.6vw,21px)/1.35 var(--serif); color:var(--ink-2); margin:-6px 0 14px; text-wrap:balance}
 .lede{font-size:17px; line-height:1.55; color:var(--ink-2); margin:0 0 22px}
 p{max-width:none}
 .intro{padding-block:40px 28px; border-bottom:1px solid var(--line)}
@@ -200,15 +201,14 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
   <a class="back" href="index.html">← overview</a>
   <p class="eyebrow">Deep dive A · post-training · source snapshots 21 and 22 September 2026</p>
   <h1>How production recipes sequence SFT, preference tuning, RL and on-policy distillation</h1>
-  <p class="lede">Post-training is no longer one stage. The documented pipelines below chain supervised finetuning, preference optimization, verifiable-reward RL and, increasingly, on-policy distillation from specialist teachers, in orders that differ by lab. This page records each recipe in the source's own words, the frameworks that implement each sub-stage, the stabilizers production runs rely on, and which audited benchmark tasks reach the stage at all.</p>
+  <p class="lede">Post-training is no longer one stage: documented pipelines chain SFT, preference optimization, verifiable-reward RL and, increasingly, on-policy distillation, in orders that differ by lab. This page records each recipe in the source's own words, the frameworks per sub-stage, the stabilizers production runs rely on, and which audited tasks reach the stage.</p>
   <div class="facts" id="facts"></div>
 </section>
 
 <section class="block" id="recipes">
   <span class="section-no">A1</span>
   <h2>Recipes as sequences</h2>
-  <p class="subhead" id="rec-sub"></p>
-  <p>Each row is one documented pipeline; steps run left to right in the order the source describes. The dot marks the sub-stage; hover a step for the source's note. Preference tuning has moved from the center of the recipe (Llama 3's six SFT and DPO rounds) to a light final touch (Llama 4) or nothing at all (GLM, DeepSeek, MiMo), while on-policy distillation now closes many recipes: Qwen3's strong-to-weak distillation, GLM-5's cross-stage distillation, DeepSeek-V4's distillation from more than ten specialist teachers, Kimi K3 and Nemotron 3 Ultra's MOPD, and MiMo-V2.6's MOPD2.</p>
+  <p>Each row is one documented pipeline, steps in the order the source describes them; hover a step for the note. Preference tuning has moved from the center of the recipe (Llama 3) to a light final touch (Llama 4) or nothing (GLM, DeepSeek, MiMo), while on-policy distillation now closes many recipes.</p>
   <div class="legend" id="legend"></div>
   <label class="toggle" style="margin:6px 0 4px"><input type="checkbox" id="showDim"> <span id="showDimLabel">show older sources</span></label>
   <div class="recipes" id="recipe-list"></div>
@@ -217,7 +217,7 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 <section class="block" id="frameworks">
   <span class="section-no">A2</span>
   <h2>Frameworks by sub-stage</h2>
-  <p>Public code that implements each sub-stage. RL frameworks dominate the ecosystem and most also ship SFT and DPO trainers; on-policy distillation is available in NeMo-RL, TRL's GKD trainer and Tinker, and as a paper with in-house code at Xiaomi. Select a chip for detail.</p>
+  <p>Public code per sub-stage. Most RL frameworks also ship SFT and DPO trainers; on-policy distillation is in NeMo-RL, TRL's GKD trainer and Tinker, and a paper with in-house code at Xiaomi.</p>
   <div class="codeband" id="fwband"></div>
   <div class="drawer" id="fw-drawer" hidden></div>
 </section>
@@ -225,7 +225,7 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 <section class="block" id="stabilizers">
   <span class="section-no">A3</span>
   <h2>What keeps a production RL run stable</h2>
-  <p>The corrections and controls that recur across reports and framework defaults, with the source that pins each one. Most address the same two confounds the workspace's staleness note separates: the training–inference numerical mismatch, present even in synchronous runs, and policy staleness introduced by asynchrony, partial rollouts and mini-batching.</p>
+  <p>The corrections and controls that recur across reports and framework defaults, with the source that pins each. Most address the training–inference numerical mismatch or the staleness that asynchrony introduces.</p>
   <div id="stab-table"></div>
 </section>
 
@@ -233,7 +233,7 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
   <span class="section-no">A4</span>
   <h2>Which audited benchmark tasks reach post-training</h2>
   <p class="subhead" id="cov-sub"></p>
-  <p>Entries whose verifier reaches the post-training stage, with the layer and relation recorded in the audit. Method hooks inside a fixed verl run and weights-only grading dominate; no audited task exercises preference tuning, on-policy distillation, or the coordination between trainer and rollout engines.</p>
+  <p>Method hooks inside a fixed verl run and weights-only grading dominate; no audited task exercises preference tuning, on-policy distillation, or trainer–rollout coordination.</p>
   <div id="cov-list"></div>
 </section>
 
@@ -334,7 +334,7 @@ $('#showDimLabel').textContent=`show ${dimCount} older or thinner sources (dimme
 $('#showDim').addEventListener('change',e=>{ showDim=e.target.checked; renderRecipes(); });
 (function(){ const use={}; for(const m of models) for(const s of m.recipe) (use[s.kind]=use[s.kind]||new Set()).add(m.id); $('#facts').replaceChildren(h('span',null,h('b',{text:String(models.length)}),' documented recipes'), ...PT.substages.map(s=>h('span',null,h('b',{text:String((use[s.id]||new Set()).size)}),' use '+s.name.toLowerCase()))); })();
 $('#legend').replaceChildren(...PT.substages.map(s=>h('span',{class:'k'},h('i',{class:'dot '+CLS[s.id]}),h('span',null,h('b',{text:s.name+' '}),h('span',{class:'kindtag',text:s.sub})))));
-function renderRecipes(){ const box=$('#recipe-list'); box.replaceChildren(); const shown=models.filter(m=>showDim||!m.dim); $('#rec-sub').textContent=`${shown.length} of ${models.length} recipes shown · steps in the order each source describes`;
+function renderRecipes(){ const box=$('#recipe-list'); box.replaceChildren(); const shown=models.filter(m=>showDim||!m.dim);
   for(const g of A.pipelines.model_groups){ const gm=shown.filter(m=>m.group===g.id); if(!gm.length) continue; box.append(h('p',{class:'eyebrow',style:'margin:14px 0 4px',text:g.name}));
     for(const m of gm){ const row=h('div',{class:'recipe'+(m.dim?' dim':'')}); row.append(h('div',{class:'who'},link(m.url,m.name),h('small',{text:m.org+' · '+m.date+' · '}),tagEl(m.tag))); const steps=h('div',{class:'steps'}); m.recipe.forEach((s,i)=>{ if(i) steps.append(h('span',{class:'sep',text:'→'})); steps.append(h('span',{class:'step','data-tt':'step','data-model':m.id,'data-i':String(i),tabindex:'0'},h('i',{class:'dot '+CLS[s.kind]}),s.label)); }); row.append(steps); box.append(row); } } }
 bindTips($('#recipe-list'), el=>{ if(el.dataset.tt!=='step') return null; const m=models.find(x=>x.id===el.dataset.model); const s=m.recipe[+el.dataset.i]; const n=h('div'); n.append(h('b',{text:m.name+' · '+SUB[s.kind].name})); n.append(h('div',{class:'m',text:s.label})); n.append(h('p',{text:(m.stages.posttrain&&m.stages.posttrain.note)||m.summary})); return n; });

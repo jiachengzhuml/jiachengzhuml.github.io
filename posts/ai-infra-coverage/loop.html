@@ -54,6 +54,7 @@ h1{font:500 clamp(26px,3.2vw,38px)/1.2 var(--serif); letter-spacing:-.01em; marg
 h2{font:500 clamp(20px,2.3vw,26px)/1.25 var(--serif); margin:0 0 8px; text-wrap:balance}
 h3{font:600 14.5px/1.4 var(--sans); margin:0 0 6px}
 .section-no{font:400 12px var(--mono); color:var(--muted); display:block; margin-bottom:6px; letter-spacing:.08em}
+.subtitle{font:500 clamp(17px,1.6vw,21px)/1.35 var(--serif); color:var(--ink-2); margin:-6px 0 14px; text-wrap:balance}
 .lede{font-size:17px; line-height:1.55; color:var(--ink-2); margin:0 0 22px}
 p{max-width:none}
 .intro{padding-block:40px 28px; border-bottom:1px solid var(--line)}
@@ -198,15 +199,14 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
   <a class="back" href="index.html">← overview</a>
   <p class="eyebrow">Inside post-training · the RL loop · source snapshots 17, 21 and 22 September 2026</p>
   <h1>The loop every production post-training stack implements</h1>
-  <p class="lede">Every stack read for this review decomposes into the same roles: a trainer, a rollout service behind an OpenAI-style endpoint, a weight-sync path, a queue or buffer between them, reward and environment services scaled separately on CPU, and an orchestrator. This page draws that loop as five components and two shared rails. Select any of them for the implementations that document it, with a verification tag on each, and for the audited benchmark tasks whose verifier touches it.</p>
+  <p class="lede">Every stack read for this review decomposes into the same roles: a trainer, a rollout service, a weight-sync path, a queue between them, environment and reward services, and an orchestrator. Select a component for the implementations that document it and the audited tasks that touch it.</p>
   <div class="facts" id="facts"></div>
 </section>
 
 <section class="block" id="loop">
   <span class="section-no">L1</span>
   <h2>The loop</h2>
-  <p class="subhead">Conceptual view synthesized from slime, verl, SkyRL, AReaL, NeMo-RL and MiMo-V2.6 documentation and the model reports · not one repository's class diagram</p>
-  <p>Trajectories flow forward, weights flow back. The badge on each box counts the audited tasks that touch it.</p>
+  <p>Trajectories flow forward, weights flow back; the badge on each box counts the audited tasks that touch it. The view is a synthesis from slime, verl, SkyRL, AReaL, NeMo-RL and MiMo-V2.6 documentation, not one repository's class diagram.</p>
   <figure id="fig-loop" aria-label="The RL post-training loop with five components and two shared rails">
     <div class="fig-title"><strong>Five components and two rails</strong><span>select a box or rail · badge = audited tasks touching it</span></div>
     <div class="scroll"><div id="loop-svg"></div></div>
@@ -218,7 +218,7 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
 <section class="block" id="components">
   <span class="section-no">L2</span>
   <h2>Component by component</h2>
-  <p>The same material as the drawer, laid out for reading: what each component does, how many implementations document it, and which audited tasks reach it.</p>
+  <p>The drawer's material laid out for reading.</p>
   <div id="comp-table"></div>
 </section>
 

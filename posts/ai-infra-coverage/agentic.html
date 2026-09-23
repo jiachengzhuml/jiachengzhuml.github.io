@@ -54,6 +54,7 @@ h1{font:500 clamp(26px,3.2vw,38px)/1.2 var(--serif); letter-spacing:-.01em; marg
 h2{font:500 clamp(20px,2.3vw,26px)/1.25 var(--serif); margin:0 0 8px; text-wrap:balance}
 h3{font:600 14.5px/1.4 var(--sans); margin:0 0 6px}
 .section-no{font:400 12px var(--mono); color:var(--muted); display:block; margin-bottom:6px; letter-spacing:.08em}
+.subtitle{font:500 clamp(17px,1.6vw,21px)/1.35 var(--serif); color:var(--ink-2); margin:-6px 0 14px; text-wrap:balance}
 .lede{font-size:17px; line-height:1.55; color:var(--ink-2); margin:0 0 22px}
 p{max-width:none}
 .intro{padding-block:40px 28px; border-bottom:1px solid var(--line)}
@@ -201,35 +202,35 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
   <a class="back" href="index.html">← overview</a>
   <p class="eyebrow">Agentic RL infrastructure · source snapshots 17, 21 and 22 September 2026</p>
   <h1>Agentic RL infrastructure, as the reports describe it</h1>
-  <p class="lede">Agentic RL is where production stacks now publish the most infrastructure detail and where public benchmarks exercise the least. This page collects that detail: the sandbox and harness fleets the rollouts run on, the staleness knobs each system exposes and how it treats a sequence in flight when weights change, a ledger of the failures reports admit to, and the mechanisms that only exist once a run spans more than one device. The loop itself, component by component, is on <a href="loop.html">its own page</a>.</p>
+  <p class="lede">Agentic RL is where production stacks publish the most infrastructure detail and public benchmarks exercise the least. This page collects that detail: sandbox and harness fleets, staleness knobs and in-flight handling, a failure ledger, and the mechanisms that only exist across devices; the loop itself is on <a href="loop.html">its own page</a>.</p>
   <div class="facts" id="facts"></div>
 </section>
 
 <section class="block" id="fleets">
   <span class="section-no">B1</span>
   <h2>Sandbox and harness fleets</h2>
-  <p>Environment execution is now a first-class service scaled separately from GPUs. The concurrency figures below are first-party claims; none has been independently verified, and the substrates range from Kubernetes pods to Firecracker microVMs.</p>
+  <p>Environment execution is a first-class service scaled separately from GPUs. The concurrency figures are first-party claims, none independently verified.</p>
   <div id="fleet-table"></div>
 </section>
 
 <section class="block" id="staleness">
   <span class="section-no">B2</span>
   <h2>Staleness knobs and in-flight handling</h2>
-  <p>Every 2026 system runs bounded-staleness asynchrony, but each counts staleness differently, so values are not comparable without restating the definition. The workspace's staleness note (<a href="notes/ASYNC_RL_STALENESS.html">ASYNC_RL_STALENESS.md</a>) holds the derivations; this table records the knob, the production value where one is published, and what happens to a sequence in flight when weights change.</p>
+  <p>Every 2026 system runs bounded-staleness asynchrony, but each counts staleness differently, so values are not comparable without the definition (derivations in <a href="notes/ASYNC_RL_STALENESS.html">ASYNC_RL_STALENESS.md</a>).</p>
   <div id="stale-table"></div>
 </section>
 
 <section class="block" id="ledger">
   <span class="section-no">B3</span>
   <h2>Failure ledger</h2>
-  <p>What reports admit went wrong and how the run recovered. MiMo-V2.6 is the first release to publish an RL failure timeline alongside a live dashboard; the pretraining entries (Llama 3, LLM360, OLMo 2) are included because the same hardware and scheduler failures hit RL clusters.</p>
+  <p>What reports admit went wrong and how the run recovered. Pretraining entries are included because the same hardware and scheduler failures hit RL clusters.</p>
   <div id="ledger-table"></div>
 </section>
 
 <section class="block" id="mechanisms">
   <span class="section-no">B4</span>
   <h2>Mechanisms that only exist across devices</h2>
-  <p>On one GPU the trainer and sampler time-share, so there is nothing to place, nothing to synchronize, no staleness and no fault domain. Seven mechanisms appear only once a run spans two or more devices; the last column names the implementations and incidents on this page that document each of them.</p>
+  <p>On one GPU there is nothing to place, synchronize or recover; these seven mechanisms appear only once a run spans two or more devices.</p>
   <div id="mech-table"></div>
 </section>
 
@@ -237,7 +238,7 @@ footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--line); font
   <span class="section-no">B5</span>
   <h2>Which audited benchmark tasks reach agentic RL</h2>
   <p class="subhead" id="cov-sub"></p>
-  <p>Every entry here is related evidence: fixed-model agent harnesses, an application request-coalescing patch, an agent-memory design. None trains a policy through tools, and none exercises weight publication, staleness control, sandbox lifecycle or recovery inside an RL loop.</p>
+  <p>Every entry is related evidence: fixed-model harnesses, an application patch, an agent-memory design. None trains a policy through tools or exercises the loop's infrastructure.</p>
   <div id="cov-list"></div>
 </section>
 
