@@ -1,0 +1,42 @@
+# Benchmark additions, 21 September 2026
+
+Five benchmarks were added to the ten-row coverage figure. Tags: **spot-checked** = primary page re-read in this session; **agent-reported** = delegated sweep, re-read before quoting.
+
+## Terminal-Bench 2.1 — spot-checked
+
+Released 6 May 2026 (TB2.1 lead Kelly Buchanan). The same 89 tasks as 2.0 (the task directory at commit `7131e4375048a0e408a8fb404b5f499d726b695b`, 11 August 2026, holds exactly 89 task directories); the news post says 28 tasks were corrected, the README says 26 were modified. Fixes fall in three categories: internet-dependent images (nine tasks), too-tight resource budgets (eight), and misspecification. "After these changes, no task is unsolved." Claude Code + Opus 4.6 rose from 58.0% to 70.1%. Canonical Harbor format (`task.toml` schema 1.1). CPU only: both task.toml files read declare `gpus = 0`; GPU environments arrived in 3.0, and 4.0 shares no tasks with 2.1. Reported in Google's Gemini 3.5 Flash model card (May 2026) and Anthropic's mid-2026 system cards; labs have since moved to 4.0.
+
+Infrastructure-related tasks mapped (three re-read at the task package, five from the sweep's reading of `instruction.md`):
+
+| Task | What it tests | Mapped as |
+|---|---|---|
+| torch-tensor-parallelism | Column/row-parallel linear layers over torch.distributed; sharding, outputs and gradients at world sizes 1/2/4 on 1 CPU, 8 GB | pretrain / distributed, bounded |
+| torch-pipeline-parallelism | AFAB pipeline train step for a LlamaForCausalLM; hooks compare activations to a reference at world sizes 1/2 | pretrain / distributed and engines, bounded |
+| llm-inference-batching-scheduler | Shape-aware batching plans scored by an analytical cost model; no engine or GPU | serve / engines, related (simulated) |
+| gpt2-codegolf | GPT-2 inference in under 5,000 bytes of C, matched to a reference | serve / engines, bounded |
+| count-dataset-tokens | Exact token count with the Qwen2.5-1.5B tokenizer | data / data & eval, bounded |
+| reshard-c4-data | Reshard C4 under file-count and size limits with a round-trip test | data / data & eval, bounded; data / distributed, related |
+| pytorch-model-recovery | Rebuild a model from a state_dict, finetune the output layer, export TorchScript | post-train / state, bounded |
+| hf-model-inference | Flask endpoint serving an HF model | serve / engines, related |
+
+No task name matches vllm, sglang, triton, cuda, megatron, nccl, jax, kv-cache or quantization; `kv-store-grpc` is a generic key-value store.
+
+## PostTrainBench — spot-checked
+
+AISA group (ELLIS Tübingen / MPI-IS); arXiv 2603.08640; ICML 2026 poster; MIT. 28 tasks = 4 base models × 7 benchmarks. "The agent is given access to an evaluation script and 10 hours on an H100 GPU"; it must "store your best trained model in the folder final_model"; contamination rule: "Do not use {benchmark} test data for training (neither questions, nor answers)." Apptainer containers with HTCondor; "Harbor support coming soon." Scored on held-out sets by exact match or a GPT-5-mini judge. Paper: best agent 23.2% versus 51.1% for official instruct models; leaderboard v1.1 (Sept 2026) tops out around 34%. Mapped as one family entry (×28): post-train / methods measured; data / methods, post-train / engines and post-train / state related. The training implementation is not verified, only the resulting weights, as in RSI-Exam.
+
+## InferenceBench — spot-checked
+
+Same group; arXiv 2607.20468; Apache-2.0, v1.0.5 (Sept 2026). Four scenarios (prefill latency, decode latency, throughput, multi-objective geomean) on Mistral-7B-Instruct-v0.3, one H100 80 GB, a 2-hour budget. The agent delivers a running OpenAI-compatible server; a quality gate requires at least 0.95 × the PyTorch baseline accuracy on a 500-question MMLU-Pro subset; an agentic integrity judge screens for reward hacking and relaunches the server in a fresh container. vLLM, SGLang, TGI and TensorRT-LLM are pre-installed. Independent of ISO-Bench and FlashInfer-Bench, which it cites. A matched-budget non-agentic search (11.5×) beats every agent (up to 8.1×), so the score measures selection and tuning of existing engines. Mapped as one family entry (×4): serve / engines measured; serve / state, methods and cluster related. The workspace's earlier note in `systems_sources.md` already flagged that repository-internal patch coverage is trajectory dependent.
+
+## WeirdML v3 — agent-reported
+
+Håvard Tveit Ihle (NDRE); funded primarily by Epoch AI, secondarily by METR and NDRE. v3 is "an agentic benchmark featuring 11 complex hand-made tasks" (exploring unfamiliar data and building ML pipelines under a 500k–50M token budget); v2 (June 2025, 19 tasks) had agents write PyTorch code that trains a model on a novel dataset in Docker on a 12-GB TITAN V. No public code repository was found. Epoch AI runs v2 and includes WeirdML in its capabilities index; no frontier model card cites it. Mapped as one family entry (×11): data / methods and data / data & eval, related. It is non-LLM machine learning; it does not touch LLM training or serving infrastructure.
+
+## EdgeBench — agent-reported
+
+Several things carry the name. The 2026 agent benchmark is ByteDance Seed's "EdgeBench: Unveiling Scaling Laws of Learning from Real-World Environments" (arXiv 2607.05155; 134 expert-built tasks, 51 public / 83 held-out; SForge harness with a work container and a judge container per task; primary metric score@12h). "Edge" is never defined and the benchmark is not about edge devices; the on-device candidates (MLPerf Inference v6.1 Edge Agentic, edge-llm-bench) are engine performance harnesses, not agent tasks. None of the 51 public tasks targets LLM training, serving, GPU kernels or checkpoints; the systems tasks are CPU SIMD/VLIW, ANN search and compression work. Mapped as one family entry (×51): pretrain / methods (from-scratch GNN and RL training) and serve / kernels (CPU kernels), both related.
+
+## Supplemental rows (benchmark-level, hollow rings, not counted)
+
+ISO-Bench (54 vLLM/SGLang PR tasks on H100), FlashInfer-Bench (serving kernels under the FlashInfer Trace schema), CommBench (101 multi-GPU communication tasks; reference sources withheld; see `../../COMMBENCH_DIGEST.md`), ATE-Bench (torchtitan, Megatron-LM, PithTrain tasks) and KernelBench (250 kernel problems). All from earlier workspace notes; none task-audited here.

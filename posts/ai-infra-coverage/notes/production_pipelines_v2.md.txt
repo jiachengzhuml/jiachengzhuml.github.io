@@ -1,0 +1,64 @@
+# Production LLM pipelines: what the sources say, 21 September 2026
+
+This note backs the "life cycles" figure, the code-by-stage band and the RL-loop anatomy. It merges the companion notes written earlier the same day (`../../llm_infra_review/production_lifecycle_sources_v2.md`, `rl_pipeline_sources_v2.md`; tag **note-2026-09-21**), three delegated sweeps (tag **agent-reported**), and eight primary pages re-read in this session (tag **spot-checked**): the slime README, GLM-4.5 §3.5, the Olmo 3 blog, the checkpoint-engine README, the Terminal-Bench 2.1 news post and task packages, and the PostTrainBench and InferenceBench READMEs. Earlier workspace notes are **prior-note**. Numbers are in `data/pipelines.json` and `data/rl_loop.json`; re-read agent-reported entries before quoting them in a paper.
+
+## 1. The stage vocabulary is stable even where the names differ
+
+| Source | Data | Pretrain | Midtrain | Post-train | Agentic RL | Serve |
+|---|---|---|---|---|---|---|
+| Llama 3 (report) | curation, dedup, mixture | 16K H100, 4D parallelism | long-context continuation, annealing | rejection sampling, SFT, DPO rounds | — | inference optimization, FP8 |
+| DeepSeek-V3 / R1 (report; serving code) | 14.8T tokens | 2,048 H800, DualPipe, FP8 | 32K → 128K (YaRN) | cold start → reasoning RL → rejection sampling + SFT → RL for all scenarios | — | prefill unit 4 nodes, decode unit 40 nodes; DeepEP/DeepGEMM/EPLB open |
+| Qwen3 (report) | > 30T tokens | General S1, Reasoning S2 | Long Context stage | long-CoT cold start → reasoning RL → thinking-mode fusion → general RL | Qwen3.5: disaggregated async RL (blog only) | — |
+| Kimi K2 / K3 (report; two components open) | 15.5T tokens | MuonClip, zero loss spike | 4K → 128K; K3 to 1M | SFT, joint RL; checkpoint-engine (1T update < 30 s) | agentic data synthesis, partial rollouts; AgentENV microVMs | K3 §5.4 |
+| GLM-4.5 (report; RL on open slime) | corpus | 355B-A32B | repo-level code · synthetic reasoning · long-context & agent | expert training → unified training; SFT, reasoning/agentic/general RL on slime | disaggregated async pools, trajectory pool, Docker runtime | SGLang commands |
+| GLM-5 (report; slime) | 27T tokens | 744B-A40B | 4K → 128K → 200K | SFT → reasoning RL → general RL → cross-stage distillation | fully decoupled, > 1k concurrent rollouts, heartbeat fault tolerance | PD disaggregation in the loop |
+| Llama 4 (blog) | — | > 30T tokens, FP8, 32K GPUs | mid-training for 10M context | lightweight SFT → online RL → lightweight DPO | fully async online RL framework | — |
+| DeepSeek-V4 (report) | — | 32–33T tokens, FP4 experts | 1M context | domain specialists → on-policy distillation | preemptible generation service (token WAL); DSec sandboxes | on-disk KV cache |
+| MiniMax-M2 (report) | — | 29.2T tokens | 8K → 32K → 192K | SFT, CISPO RL | Forge: gateway, data pool, windowed FIFO | — |
+| Nemotron 3 Super (report + open recipe) | data-prep (subset) | Megatron-Bridge, 25T tokens | LC-phase CPT at 1M on GB200 | SFT → RLVR/SWE-RL/RLHF → MTP healing (NeMo-RL) | SWE-RL, NeMo-Gym, 4,000 env instances per batch | quantization, evaluator |
+| OLMo 3 (fully open) | Dolma 3 tools | OLMo-core, 5.9T, up to 1,024 H100 | Dolmino 100B; Longmino ~50B | Open Instruct: SFT → DPO → RLVR (OlmoRL async) | — | — |
+| SmolLM3 (fully open) | datatrove | nanotron, 3 stages to 11.1T, 384 H100 | long-context 100B; reasoning mid-training 140B | TRL: SFT → APO, merging | — | — |
+| Apertus (open pretraining) | pretrain-data | Megatron fork, up to 4,096 GPUs | 4K → 64K | SFT → QRPO | — | — |
+| LLM360 K2 / K2-V2 (fully open) | TxT360 | 480 A100, weekly hardware failures | four mid-training stages to 512K | SFT | — | — |
+| Marin (open lab) | data browser, executor DAG | Levanter on TPU, 12.7T (8B) | — | SFT; RL by 2026 | — | — |
+| Arcee Trinity Large (report; RL on prime-rl) | — | 2,048 B300, modified TorchTitan | ~117B long-context | SFT at 64K; RL with prime-rl | — | — |
+| Mercor 397B (open recipe) | — | — | — | — | SkyRL async, S=3, 300–550 concurrent rollouts | vLLM rollout engines |
+
+Observations that shape the page:
+
+- **Every stage has public code**, but the released-model reports rarely give RL cluster sizes (Kimi, GLM, Qwen, MiniMax and DeepSeek-V4 do not), and only Llama 3 (466 interruptions in 54 days, > 90% effective time) and LLM360 K2 (weekly hardware failures, 12 categories) publish failure statistics. OLMo 2 describes the health-check, cordon and auto-restart mechanism without counts. This is the gap a benchmark environment must reproduce: operating the code, not writing it.
+- **Midtraining is a real, named stage almost everywhere** (Dolmino, annealing, LC-phase, three GLM sub-stages, four K2-V2 stages), yet no audited benchmark task targets it. The grid keeps it "unaudited" rather than borrowing pretraining evidence.
+- **Serving appears twice**: as the user-facing service (vLLM, SGLang, Dynamo, llm-d, production-stack; DeepSeek's own 278-node account) and as the rollout engine inside every RL stack. A CPU parser repair in vLLM is evidence for neither role's operational behavior.
+- **Agentic RL has become the stage with the most first-party infrastructure detail** (GLM-5, Kimi K2.5/K3, DeepSeek-V4, MiniMax Forge, INTELLECT-3, Nemotron 3, Mercor) and the least benchmark coverage.
+
+## 2. The RL loop, and where the implementations differ
+
+The sweep decomposes every stack into six roles: a trainer (Megatron-Core in slime, AReaL, SkyRL/Mercor, NeMo-RL, ROLL and verl; FSDP2 in prime-rl, torchforge and OpenRLHF; hidden behind LoRA in Tinker), a rollout service with an OpenAI-style endpoint (vLLM or SGLang), a weight-sync path (NCCL broadcast in verl, SkyRL, Magistral, TRL and NeMo-RL; a checkpoint engine in Kimi at about 20 s per 1T model; HTTP relays in prime-rl; delta patches in slime; an RDMA store in torchforge), a queue or buffer (slime Data Buffer, verl MessageQueue and TransferQueue, NeMo-RL replay buffer, LongCat SampleQueue, MiniMax Data Pool), reward/verifier and sandbox services scaled on CPU (Prime Sandboxes > 4,000, LongCat 32,000 environments, Kimi K2.5 up to 100,000 tasks, DeepSeek DSec "hundreds of thousands"), and an orchestrator (Ray almost everywhere; Monarch in torchforge).
+
+They differ in placement (colocated hybrid engines for reasoning RL in Kimi K2, Seed1.5-Thinking, verl and GLM-4.5's synchronous mode; disaggregated GPUs for agentic RL in GLM-5, INTELLECT-3's 16:44 split, Mercor's 12:8, NeMo-RL's async mode, RollArt), in synchrony (bounded-staleness knobs: AReaL η = 4/8, INTELLECT-3 max_off_policy_steps = 8, Mercor 4, NeMo-RL max_trajectory_age_steps = 1, verl staleness_threshold, SkyRL max_staleness_steps; in-flight updates and partial rollouts; 2–4× speedups reported), and in the train–inference mismatch fix (importance-sampling correction by default in TRL and required in NeMo-RL; FP32 LM head in MiniMax; batch-invariant kernels in Thinking Machines and TitanRL). This matches the workspace's staleness note (`../../ASYNC_RL_STALENESS.md`).
+
+The five-part conceptual loop on the page (prompts & environments → rollout → score & admit → learn → publish weights, with checkpoint/recovery and placement/networking/sandbox rails) is the earlier companion note's proposal, labeled as a synthesis illustrated with slime and GLM-4.5. It is not any repository's class diagram.
+
+## 3. What the audited tasks touch, per component
+
+- Learn: MLS-Bench's four verl hooks (measured, infrastructure fixed), RE-Bench's Foundry pipeline (measured, SFT) and GPT-2 chat RL (measured, tiny).
+- Rollout: two Terminal-Bench 4 parser repairs in vLLM and SGLang (bounded, CPU).
+- Checkpoint & recovery rail: TB4 checkpoint consolidation (bounded), Foundry export (measured).
+- Placement rail: MLS EPLB (simulated), DeepSWE Arcane drift detection (bounded, container management).
+- Prompts & environments, score & admit, publish weights: nothing in the audited set. These map onto RL-Infra-Bench's rollout-throughput, staleness, weight-synchronization and recovery families (BLUEPRINT §12.2).
+
+## 4. Points to settle with the user
+
+1. **Canonical case study.** The page uses GLM-4.5 + slime as the worked example because the report and the code line up (report §3.5 describes exactly the three modules the README names). Nemotron 3 Super is the most complete open recipe; OLMo 3 is the most complete open pipeline. Any of the three could lead.
+2. **Whether to treat "Serve" as one stage or two.** Rollout engines inside RL and user-facing serving share code but not operational contracts. The page keeps one column and notes the dual role; splitting it would give agentic RL a cleaner infrastructure story.
+3. **Family entries.** PostTrainBench (28), InferenceBench (4), WeirdML (11) and EdgeBench (51 public) count once each. Counting instances would triple the post-training column without adding verifier diversity.
+4. **Agent-reported numbers** (DeepSeek-V4 sandbox counts, Kimi K2.5 100,000 concurrent tasks, LongCat 32,000 environments, Qwen3.5 claims) are on the page with dashed tags. They should be re-read before any of them reaches a paper.
+5. **Supplemental benchmarks** (ISO-Bench, FlashInfer-Bench, CommBench, ATE-Bench, KernelBench) are rings, not counts. Promoting any of them to a primary row needs a task-level read.
+
+## 5. Revision 2.1 (22 September 2026)
+
+Applied from the user's review of the page: prose now runs at full width; six older or thinner reports (Llama 3, DeepSeek-V3/R1, Llama 4, Apertus, LLM360 K2, Arcee Trinity) are hidden behind a toggle and dimmed when shown; Mercor stays visible. Continued pretraining, annealing and long-context extension were merged into the pretraining column because they share the objective and trainer and no audited task targets them separately. On-policy distillation joined the post-training vocabulary with four code chips (NeMo-RL's on-policy and X-token distillation recipes, TRL's GKDTrainer, Thinking Machines' Tinker post, Xiaomi's MOPD/MOPD2 paper) after re-reading each source. The Marin row now cites the Open Athena 535B launch note (August 2026 start on CoreWeave GPUs with JAX/XLA:GPU, 18T tokens, MFU 21% → 24%, preregistered loss predictions; Snowball 67B-A2B in post-training). The RL loop moved to two deep-dive pages: `posttrain.html` (recipes as sequences for all 18 pipelines, frameworks by sub-stage, twelve stabilizers with sources) and `agentic.html` (the loop with 59 implementations, ten fleets, twelve staleness entries, ten ledger rows, seven RL-Infra-Bench families). The grid no longer highlights the agentic column.
+
+## 6. Revision 2.2 (22 September 2026)
+
+The user asked that the pages read as a review rather than as the case for a benchmark under construction. Every mention of RL-Infra-Bench on the pages was removed: the coverage figure's target box and key item, the loop drawer's "families" line, and the agentic page's blueprint-derived table, which is now "Mechanisms that only exist across devices" with three columns (mechanism, why it needs several devices, what documents it). The overview's post-training section became three blocks: the RL loop (new page `loop.html`, with the figure, drawer and a component table), post-training recipes, and agentic RL infrastructure. The mapping from incidents to benchmark mechanism families remains in this note's §3 and in `mimo_v26_review.md` §8 for the benchmark work, off the pages.
